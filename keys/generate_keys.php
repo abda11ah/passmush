@@ -1,4 +1,8 @@
 <?php
+// The keys should be generated only via command line!
+
+if (!isset($_SERVER['SHELL'])) { die('Direct access not permitted'); }
+
 // Generate private key
 $private_key = openssl_pkey_new([
     "private_key_bits" => 2048,
