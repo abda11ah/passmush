@@ -17,6 +17,7 @@ return [
     'max_views_reached' => 'Ce mot de passe a atteint sa limite maximale de vues.',
     'share_success' => 'Mot de Passe Partagé avec Succès!',
     'share_link' => 'Partagez ce lien sécurisé:',
+    'generate' => 'Générer',
     'time_options' => [
         '1' => '1 heure',
         '2' => '2 heures',

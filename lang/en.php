@@ -17,6 +17,7 @@ return [
     'max_views_reached' => 'This password has reached its maximum view limit.',
     'share_success' => 'Password Shared Successfully!',
     'share_link' => 'Share this secure link:',
+    'generate' => 'Generate',
     'time_options' => [
         '1' => '1 hour',
         '2' => '2 hours',
