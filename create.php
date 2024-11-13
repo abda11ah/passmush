@@ -1,8 +1,11 @@
 <?php
 require_once 'db.php';
+require_once 'encryption.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $encryption = new Encryption();
     $password = $_POST['password'];
+    $encrypted_password = $encryption->encrypt($password);
     $expires = (int)$_POST['expires'];
     $view_limit = (int)$_POST['view_limit'];
     
@@ -12,9 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Calculate expiration timestamp
     $expiration = time() + ($expires * 3600);
     
-    // Store the original password (not hashed since we need to display it later)
+    // Store only the encrypted password
     $stmt = $pdo->prepare("INSERT INTO passwords (id, password, expires_at, view_limit, created_at) VALUES (?, ?, ?, ?, ?)");
-    $stmt->execute([$id, $password, $expiration, $view_limit, time()]);
+    $stmt->execute([$id, $encrypted_password, $expiration, $view_limit, time()]);
     
     $share_url = "http://" . $_SERVER['HTTP_HOST'] . "/view.php?id=" . $id;
     
