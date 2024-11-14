@@ -19,6 +19,13 @@ require_once 'lang.php';
         }
         .password-group input {
             flex: 1;
+            transition: filter 0.3s ease;
+        }
+        .password-group input.blur {
+            filter: blur(5px);
+        }
+        .password-group input.blur:focus {
+            filter: none;
         }
     </style>
     <script>
@@ -41,11 +48,12 @@ require_once 'lang.php';
         // Shuffle the password
         password = password.split('').sort(() => Math.random() - 0.5).join('');
         
-        document.getElementById('password-input').value = password;
-        document.getElementById('password-input').type = 'text';
-        // The generated password will be visible for 3 seconds before being masked again
+        const input = document.getElementById('password-input');
+        input.value = password;
+        input.classList.remove('blur');
+        
         setTimeout(() => {
-            document.getElementById('password-input').type = 'password';
+            input.classList.add('blur');
         }, 3000);
     }
     </script>
@@ -65,7 +73,7 @@ require_once 'lang.php';
                     <div class="col">
                         <label><?php echo __('password_to_share'); ?></label>
                         <div class="password-group">
-                            <input type="password" name="password" id="password-input" required>
+                            <input type="text" name="password" id="password-input" required onmouseover="this.classList.remove('blur');" onmouseout="this.classList.add('blur');">
                             <button type="button" onclick="generatePassword()" class="button outline">
                                 <?php echo __('generate'); ?>
                             </button>
