@@ -1,5 +1,5 @@
 <?php
-require_once 'db.php';
+include 'db.php';
 require_once 'encryption.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
