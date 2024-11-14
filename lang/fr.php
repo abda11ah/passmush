@@ -18,6 +18,10 @@ return [
     'share_success' => 'Mot de Passe Partagé avec Succès!',
     'share_link' => 'Partagez ce lien sécurisé:',
     'generate' => 'Générer',
+    'destroy_password' => 'Détruire le Mot de Passe',
+    'confirm_destroy' => 'Êtes-vous sûr de vouloir détruire ce mot de passe ? Cette action est irréversible.',
+    'password_destroyed' => 'Le mot de passe a été détruit avec succès.',
+    'destroy_error' => 'Une erreur est survenue lors de la destruction du mot de passe.',
     'time_options' => [
         '1' => '1 heure',
         '2' => '2 heures',

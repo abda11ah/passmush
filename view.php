@@ -42,6 +42,19 @@ if (!$password) {
             font-family: monospace;
         }
         .error { color: var(--color-error); }
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .button.error { 
+            background: var(--color-error);
+            border-color: var(--color-error);
+        }
+        .button.error:hover {
+            background: var(--color-error);
+            filter: brightness(90%);
+        }
     </style>
     <script>
     function copyToClipboard() {
@@ -53,6 +66,28 @@ if (!$password) {
                 copyBtn.textContent = '<?php echo __('copy_clipboard'); ?>';
             }, 2000);
         });
+    }
+
+    function destroyPassword() {
+        if (confirm('<?php echo __('confirm_destroy'); ?>')) {
+            fetch('destroy.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'id=<?php echo urlencode($id); ?>'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('<?php echo __('password_destroyed'); ?>');
+                    window.location.href = 'index.php';
+                } else {
+                    alert('<?php echo __('destroy_error'); ?>');
+                }
+            })
+            .catch(() => alert('<?php echo __('destroy_error'); ?>'));
+        }
     }
     </script>
 </head>
@@ -91,7 +126,12 @@ if (!$password) {
             
             <div class="row">
                 <div class="col">
-                    <a href="index.php" class="button primary"><?php echo __('share_another'); ?></a>
+                    <div class="button-group">
+                        <a href="index.php" class="button primary"><?php echo __('share_another'); ?></a>
+                        <?php if (!isset($error)): ?>
+                            <button onclick="destroyPassword()" class="button error"><?php echo __('destroy_password'); ?></button>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>

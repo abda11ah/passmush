@@ -18,6 +18,10 @@ return [
     'share_success' => 'Password Shared Successfully!',
     'share_link' => 'Share this secure link:',
     'generate' => 'Generate',
+    'destroy_password' => 'Destroy Password',
+    'confirm_destroy' => 'Are you sure you want to destroy this password? This action cannot be undone.',
+    'password_destroyed' => 'Password has been successfully destroyed.',
+    'destroy_error' => 'An error occurred while destroying the password.',
     'time_options' => [
         '1' => '1 hour',
         '2' => '2 hours',
