@@ -2,7 +2,19 @@
 $host = 'localhost';
 $dbname = 'password_share';
 $username = 'root';
-$password = '';
+$password = '0000';
+
+try {
+    $db = new PDO("mysql:host=$host", $username, $password);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $dbname = "`".str_replace("`","``",$dbname)."`";
+    
+    // Create database if it doesn't exist
+  //  print("CREATE DATABASE IF NOT EXISTS $dbname DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;");exit;
+    $db->exec("CREATE DATABASE IF NOT EXISTS $dbname DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;");
+} catch(PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
+}
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);

@@ -7,7 +7,20 @@ require_once 'lang.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo __('page_title'); ?></title>
-    <link href="tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="chota.min.css">
+    <style>
+        body { padding: 2rem; background: var(--bg-secondary); }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card { background: white; padding: 2rem; border-radius: 4px; }
+        .text-right { text-align: right; }
+        .password-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .password-group input {
+            flex: 1;
+        }
+    </style>
     <script>
     function generatePassword() {
         const length = Math.floor(Math.random() * (16 - 8 + 1)) + 8; // Random length between 8 and 16
@@ -30,59 +43,59 @@ require_once 'lang.php';
         
         document.getElementById('password-input').value = password;
         document.getElementById('password-input').type = 'text';
+        // The generated password will be visible for 3 seconds before being masked again
         setTimeout(() => {
-            document.getElementById('password-input').type = 'text';
-        }, 2000);
+            document.getElementById('password-input').type = 'password';
+        }, 3000);
     }
     </script>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <div class="text-right mb-4">
-            <a href="?lang=fr" class="<?php echo $_SESSION['lang'] === 'fr' ? 'font-bold' : ''; ?>">Français</a> |
-            <a href="?lang=en" class="<?php echo $_SESSION['lang'] === 'en' ? 'font-bold' : ''; ?>">English</a>
-        </div>
+<body>
+    <div class="container">
+        <nav class="text-right">
+            <a href="?lang=fr" class="<?php echo $_SESSION['lang'] === 'fr' ? 'active' : ''; ?>">Français</a> |
+            <a href="?lang=en" class="<?php echo $_SESSION['lang'] === 'en' ? 'active' : ''; ?>">English</a>
+        </nav>
         
-        <h1 class="text-3xl font-bold text-center mb-8"><?php echo __('page_title'); ?></h1>
+        <h1 class="text-center"><?php echo __('page_title'); ?></h1>
         
-        <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-            <form action="create.php" method="POST" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700"><?php echo __('password_to_share'); ?></label>
-                    <div class="mt-1 flex rounded-md shadow-sm">
-                        <input type="text" name="password" id="password-input" required 
-                               class="flex-1 rounded-l-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        <button type="button" onclick="generatePassword()"
-                                class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 hover:bg-gray-100">
-                            <?php echo __('generate'); ?>
-                        </button>
+        <div class="card">
+            <form action="create.php" method="POST">
+                <div class="row">
+                    <div class="col">
+                        <label><?php echo __('password_to_share'); ?></label>
+                        <div class="password-group">
+                            <input type="password" name="password" id="password-input" required>
+                            <button type="button" onclick="generatePassword()" class="button outline">
+                                <?php echo __('generate'); ?>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700"><?php echo __('expires_after'); ?></label>
-                    <select name="expires" required 
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                        <?php foreach (__('time_options') as $value => $label): ?>
-                            <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                <div class="row">
+                    <div class="col">
+                        <label><?php echo __('expires_after'); ?></label>
+                        <select name="expires" required>
+                            <?php foreach (__('time_options') as $value => $label): ?>
+                                <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700"><?php echo __('view_limit'); ?></label>
-                    <select name="view_limit" required 
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                        <?php foreach (__('view_options') as $value => $label): ?>
-                            <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                <div class="row">
+                    <div class="col">
+                        <label><?php echo __('view_limit'); ?></label>
+                        <select name="view_limit" required>
+                            <?php foreach (__('view_options') as $value => $label): ?>
+                                <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                 </div>
                 
-                <button type="submit" 
-                        class="w-full bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                    <?php echo __('generate_link'); ?>
-                </button>
+                <button type="submit" class="button primary"><?php echo __('generate_link'); ?></button>
             </form>
         </div>
     </div>
