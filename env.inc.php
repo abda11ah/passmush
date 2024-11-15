@@ -38,7 +38,7 @@ class EnvironmentChecker {
                 $this->messages[] = "✓ " . __('keys_dir_created');
             } else {
                 $this->errors[] = "✗ " . __('keys_dir_error');
-                return false;
+                return $this;
             }
         }
 
@@ -46,7 +46,6 @@ class EnvironmentChecker {
             $this->messages[] = "✓ " . __('keys_dir_writable');
         } else {
             $this->errors[] = "✗ " . __('keys_dir_not_writable');
-            return false;
         }
 
         return $this;

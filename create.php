@@ -19,7 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare("INSERT INTO passwords (id, password, expires_at, view_limit, created_at) VALUES (?, ?, ?, ?, ?)");
     $stmt->execute([$id, $encrypted_password, $expiration, $view_limit, time()]);
     
-    $share_url = "http://" . $_SERVER['HTTP_HOST'] . "/view.php?id=" . $id;
+    $http = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://');
+    $share_url = $http . $_SERVER['HTTP_HOST'] . "/view.php?id=" . $id;
     
     // Return success page with URL
     require_once 'success.php';
