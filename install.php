@@ -8,7 +8,7 @@ $lang = in_array($browser_lang, ['fr', 'en']) ? $browser_lang : 'en';
 if (isset($_GET['lang']) && in_array($_GET['lang'], ['fr', 'en'])) {
     $lang = $_GET['lang'];
 }
-require 'config.inc.php';
+
 $translations = [
     'en' => [
         'installation' => 'Password Share Installation',
@@ -70,6 +70,9 @@ function __($key, ...$args) {
     return $args ? sprintf($text, ...$args) : $text;
 }
 
+require_once 'env.inc.php';
+require 'config.inc.php';
+
 class Installer {
     private $messages = [];
     private $errors = [];
@@ -81,62 +84,22 @@ class Installer {
     ];
 
     public function run() {
-        $this->checkPHPVersion()
-             ->checkPDOExtension()
-             ->checkOpenSSLExtension()
-             ->createDatabase()
-             ->createTables();
-        if ($this->createKeysDirectory()) {$this->generateSSLKeys();}
+        $envChecker = new EnvironmentChecker();
+        $envChecker->checkPHPVersion()
+                  ->checkPDOExtension()
+                  ->checkOpenSSLExtension()
+                  ->checkKeysDirectory();
+
+        $this->messages = array_merge($this->messages, $envChecker->getMessages());
+        $this->errors = array_merge($this->errors, $envChecker->getErrors());
+
+        if (!$envChecker->hasErrors()) {
+            $this->generateSSLKeys()
+                 ->createDatabase()
+                 ->createTables();
+        }
+
         $this->displayResults();
-    }
-
-    private function checkPHPVersion() {
-        if (version_compare(PHP_VERSION, '7.4.0', '>=')) {
-            $this->messages[] = "✓ " . __('php_version_ok', PHP_VERSION);
-        } else {
-            $this->errors[] = "✗ " . __('php_version_error', PHP_VERSION);
-        }
-        return $this;
-    }
-
-    private function checkPDOExtension() {
-        if (extension_loaded('pdo_mysql')) {
-            $this->messages[] = "✓ " . __('pdo_ok');
-        } else {
-            $this->errors[] = "✗ " . __('pdo_error');
-        }
-        return $this;
-    }
-
-    private function checkOpenSSLExtension() {
-        if (extension_loaded('openssl')) {
-            $this->messages[] = "✓ " . __('openssl_ok');
-        } else {
-            $this->errors[] = "✗ " . __('openssl_error');
-        }
-        return $this;
-    }
-
-    private function createKeysDirectory() {
-        $keysDir = __DIR__ . '/keys';
-        
-        if (!file_exists($keysDir)) {
-            if (mkdir($keysDir, 0755, true)) {
-                $this->messages[] = "✓ " . __('keys_dir_created');
-            } else {
-                $this->errors[] = "✗ " . __('keys_dir_error');
-                return false;
-            }
-        }
-
-        if (is_writable($keysDir)) {
-            $this->messages[] = "✓ " . __('keys_dir_writable');
-        } else {
-            $this->errors[] = "✗ " . __('keys_dir_not_writable');
-            return false;
-        }
-
-        return $this;
     }
 
     private function generateSSLKeys() {
@@ -221,7 +184,8 @@ class Installer {
         return $this;
     }
 
-    private function displayResults() {global $lang;
+    private function displayResults() {
+        global $lang;
         ?>
         <!DOCTYPE html>
         <html lang="<?php echo $lang; ?>">

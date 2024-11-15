@@ -22,6 +22,8 @@ return [
     'confirm_destroy' => 'Are you sure you want to destroy this password? This action cannot be undone.',
     'password_destroyed' => 'Password has been successfully destroyed.',
     'destroy_error' => 'An error occurred while destroying the password.',
+    'errors' => 'System Errors',
+    'go_to_install' => 'Go to Installation',
     'time_options' => [
         '1' => '1 hour',
         '2' => '2 hours',
