@@ -115,7 +115,7 @@ if ($envChecker->hasErrors()) {
                     <div class="col">
                         <label><?php echo __('password_to_share'); ?></label>
                         <div class="password-group">
-                            <input type="text" name="password" id="password-input" required onmouseover="this.classList.remove('blur');" onmouseout="this.classList.add('blur');">
+                            <input type="text" name="password" id="password-input" required onmouseover="this.classList.remove('blur');" onmouseout="if (this.value.trim() !== '') {this.classList.add('blur');}">
                             <button type="button" onclick="generatePassword()" class="button outline">
                                 <?php echo __('generate'); ?>
                             </button>
@@ -145,7 +145,7 @@ if ($envChecker->hasErrors()) {
                     </div>
                 </div>
                 
-                <button type="submit" class="button primary"><?php echo __('generate_link'); ?></button>
+                <div align="center"><button type="submit" class="button primary"><?php echo __('generate_link'); ?></button></div>
             </form>
         </div>
     </div>
