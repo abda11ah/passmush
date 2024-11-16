@@ -9,7 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['id'])) {
 }
 
 try {
-    $stmt = $pdo->prepare("DELETE FROM passwords WHERE id = ?");
+    $table = DBTABLE_PREFIX . 'passwords';
+    $stmt = $pdo->prepare("DELETE FROM {$table} WHERE id = ?");
     $success = $stmt->execute([$_POST['id']]);
     echo json_encode(['success' => $success]);
 } catch (Exception $e) {

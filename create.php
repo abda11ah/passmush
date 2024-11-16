@@ -58,8 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Calculate expiration timestamp
     $expiration = time() + ($expires * 3600);
     
-    // Store only the encrypted password
-    $stmt = $pdo->prepare("INSERT INTO passwords (id, data, expires_at, view_limit, created_at) VALUES (?, ?, ?, ?, ?)");
+    // Store the encrypted data
+    $table = DBTABLE_PREFIX . 'passwords';
+    $stmt = $pdo->prepare("INSERT INTO {$table} (id, data, expires_at, view_limit, created_at) VALUES (?, ?, ?, ?, ?)");
     $stmt->execute([$id, $encrypted, $expiration, $view_limit, time()]);
     
     $http = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://');

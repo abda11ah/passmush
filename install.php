@@ -32,8 +32,8 @@ class Installer {
                      ->generateSSLKeys()
                      ->createDatabase()
                      ->createTables();
-                
-                if (empty($this->errors)) {
+
+                if (!$this->hasErrors()) {
                     $_SESSION['install_messages'] = $this->messages;
                     header('Location: install_success.php');
                     exit;
@@ -65,18 +65,18 @@ class Installer {
                 $_POST['db_pass']
             );
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            // If testing with existing database, check if it exists
-            if (isset($_POST['db_name']) && !empty($_POST['db_name'])) {
-                $stmt = $pdo->query("SHOW DATABASES LIKE '{$_POST['db_name']}'");
-                if ($stmt->rowCount() > 0) {
-                    $this->messages[] = "✓ " . __('db_exists');
-                } else {
+            
+            // If testing connection with existing database
+            if ($_POST['db_create'] === 'existing' && !empty($_POST['existing_db_name'])) {
+                try {
+                    $pdo->query("USE " . $pdo->quote($_POST['existing_db_name']));
+                    $this->messages[] = "✓ " . __('db_connected');
+                } catch (PDOException $e) {
                     $this->errors[] = "✗ " . __('db_not_exists');
                     return;
                 }
             }
-
+            
             $this->messages[] = "✓ " . __('db_connection_success');
         } catch (PDOException $e) {
             $this->errors[] = "✗ " . __('db_connection_error', $e->getMessage());
@@ -87,9 +87,10 @@ class Installer {
         $config = "<?php\n";
         $config .= "// Database configuration\n";
         $config .= "define('DBHOST', '" . addslashes($_POST['db_host']) . "');\n";
-        $config .= "define('DBNAME', '" . addslashes($_POST['db_name']) . "');\n";
+        $config .= "define('DBNAME', '" . addslashes($_POST['db_create'] === 'existing' ? $_POST['existing_db_name'] : $_POST['db_name']) . "');\n";
         $config .= "define('DBUSER', '" . addslashes($_POST['db_user']) . "');\n";
         $config .= "define('DBPASS', '" . addslashes($_POST['db_pass']) . "');\n";
+        $config .= "define('DBTABLE_PREFIX', '" . addslashes($_POST['table_prefix']) . "'); // Optional table prefix\n";
 
         if (file_put_contents('config.inc.php', $config) === false) {
             $this->errors[] = "✗ " . __('config_write_error');
@@ -150,10 +151,10 @@ class Installer {
                            DEFAULT COLLATE utf8mb4_unicode_ci");
                 $this->messages[] = "✓ " . __('db_created');
             } else {
-                // Verify the existing database is accessible
-                $dbname = $_POST['db_name'];
-                $pdo->exec("USE `$dbname`");
-                $this->messages[] = "✓ " . __('db_connected');
+                // Verify existing database is accessible
+                $dbname = $_POST['existing_db_name'];
+                $pdo->query("USE `$dbname`");
+                $this->messages[] = "✓ " . __('db_exists');
             }
         } catch (PDOException $e) {
             $this->errors[] = "✗ " . __('db_error', $e->getMessage());
@@ -164,15 +165,16 @@ class Installer {
 
     private function createTables() {
         try {
+            $dbname = $_POST['db_create'] === 'existing' ? $_POST['existing_db_name'] : $_POST['db_name'];
             $pdo = new PDO(
-                "mysql:host={$_POST['db_host']};dbname={$_POST['db_name']}", 
+                "mysql:host={$_POST['db_host']};dbname=$dbname", 
                 $_POST['db_user'], 
                 $_POST['db_pass']
             );
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             $prefix = $_POST['table_prefix'];
-            $tableName = $prefix . $_POST['table_name'];
+            $tableName = $prefix . 'passwords';
 
             $pdo->exec("CREATE TABLE IF NOT EXISTS `$tableName` (
                 id VARCHAR(32) PRIMARY KEY,
@@ -189,6 +191,10 @@ class Installer {
         }
 
         return $this;
+    }
+
+    private function hasErrors() {
+        return !empty($this->errors);
     }
 
     private function displayForm() {
@@ -296,8 +302,23 @@ class Installer {
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <label for="test_db"><?php echo __('db_name'); ?> (<?php echo __('optional'); ?>)</label>
-                                    <input type="text" id="test_db" name="db_name" placeholder="<?php echo __('existing_db_name'); ?>">
+                                    <label><?php echo __('db_create_type'); ?></label>
+                                    <label>
+                                        <input type="radio" name="db_create" value="new" checked onchange="toggleDatabaseFields()">
+                                        <?php echo __('db_create_new'); ?>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="db_create" value="existing" onchange="toggleDatabaseFields()">
+                                        <?php echo __('db_use_existing'); ?>
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="existing-db-fields" class="hidden">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="existing_db_name"><?php echo __('existing_db_name'); ?></label>
+                                        <input type="text" id="existing_db_name" name="existing_db_name" placeholder="<?php echo __('enter_existing_db'); ?>">
+                                    </div>
                                 </div>
                             </div>
                             <button type="submit" name="test_connection" class="button"><?php echo __('test_connection'); ?></button>
@@ -340,8 +361,8 @@ class Installer {
                             <div id="new-db-fields">
                                 <div class="row">
                                     <div class="col">
-                                        <label for="new_db_name"><?php echo __('db_name'); ?></label>
-                                        <input type="text" id="new_db_name" name="db_name" value="password_share">
+                                        <label for="db_name"><?php echo __('db_name'); ?></label>
+                                        <input type="text" id="db_name" name="db_name" value="password_share" required>
                                     </div>
                                 </div>
                             </div>
@@ -349,7 +370,7 @@ class Installer {
                                 <div class="row">
                                     <div class="col">
                                         <label for="existing_db_name"><?php echo __('existing_db_name'); ?></label>
-                                        <input type="text" id="existing_db_name" name="db_name" placeholder="<?php echo __('enter_existing_db'); ?>">
+                                        <input type="text" id="existing_db_name" name="existing_db_name" placeholder="<?php echo __('enter_existing_db'); ?>">
                                     </div>
                                 </div>
                             </div>
@@ -381,3 +402,4 @@ class Installer {
 
 $installer = new Installer();
 $installer->run();
+?>

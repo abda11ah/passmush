@@ -53,7 +53,8 @@ if (!isset($_GET['id'])) {
 
 $id = $_GET['id'];
 $current_time = time();
-$stmt = $pdo->prepare("SELECT * FROM passwords WHERE id = ? AND expires_at > ?");
+$table = DBTABLE_PREFIX . 'passwords';
+$stmt = $pdo->prepare("SELECT * FROM {$table} WHERE id = ? AND expires_at > ?");
 $stmt->execute([$id, $current_time]);
 $row = $stmt->fetch();
 
@@ -62,7 +63,7 @@ if (!$row) {
 } elseif ($row['view_limit'] > 0 && $row['view_count'] >= $row['view_limit']) {
     $error = __('max_views_reached');
 } else {
-    $stmt = $pdo->prepare("UPDATE passwords SET view_count = view_count + 1 WHERE id = ?");
+    $stmt = $pdo->prepare("UPDATE {$table} SET view_count = view_count + 1 WHERE id = ?");
     $stmt->execute([$id]);
     $row['view_count']++;
 }
