@@ -1,4 +1,7 @@
 <?php
+// Prevent direct access to this file
+defined('SECURE_ACCESS') or die('Direct access to this file is not allowed');
+
 function showInstallWarning() {
     if (file_exists(__DIR__ . '/install.php')) {
         ?>
@@ -11,4 +14,3 @@ function showInstallWarning() {
         <?php
     }
 }
-?>

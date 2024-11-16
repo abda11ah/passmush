@@ -1,4 +1,7 @@
 <?php
+// Prevent direct access to this file
+defined('SECURE_ACCESS') or die('Direct access to this file is not allowed');
+
 class Encryption {
     private $public_key;
     private $private_key;

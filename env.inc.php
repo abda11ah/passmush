@@ -1,7 +1,11 @@
 <?php
+// Prevent direct access to this file
+defined('SECURE_ACCESS') or die('Direct access to this file is not allowed');
+
 class EnvironmentChecker {
     private $messages = [];
     private $errors = [];
+    private $configWritable = false;
 
     public function checkPHPVersion() {
         if (version_compare(PHP_VERSION, '7.4.0', '>=')) {
@@ -49,6 +53,24 @@ class EnvironmentChecker {
         }
 
         return $this;
+    }
+
+    public function checkConfigWritable() {
+        $configFile = 'config.inc.php';
+        if (file_exists($configFile)) {
+            $this->configWritable = is_writable($configFile);
+        } else {
+            $this->configWritable = is_writable(dirname($configFile));
+        }
+
+        if (!$this->configWritable) {
+            $this->errors[] = "✗ " . __('config_not_writable');
+        }
+        return $this;
+    }
+
+    public function isConfigWritable() {
+        return $this->configWritable;
     }
 
     public function getMessages() {

@@ -1,4 +1,6 @@
 <?php
+// Define secure access constant
+define('SECURE_ACCESS', true);
 session_start();
 
 require_once 'lang.php';
@@ -8,20 +10,22 @@ class Installer {
     private $messages = [];
     private $errors = [];
     private $config = [];
-    private $configWritable = false;
+    private $envChecker;
+
+    public function __construct() {
+        $this->envChecker = new EnvironmentChecker();
+    }
 
     public function run() {
-        // Check if config file is writable
-        $this->checkConfigWritable();
+        // Check environment requirements
+        $this->envChecker->checkPHPVersion()
+                        ->checkPDOExtension()
+                        ->checkOpenSSLExtension()
+                        ->checkKeysDirectory()
+                        ->checkConfigWritable();
 
-        $envChecker = new EnvironmentChecker();
-        $envChecker->checkPHPVersion()
-                  ->checkPDOExtension()
-                  ->checkOpenSSLExtension()
-                  ->checkKeysDirectory();
-
-        $this->messages = array_merge($this->messages, $envChecker->getMessages());
-        $this->errors = array_merge($this->errors, $envChecker->getErrors());
+        $this->messages = array_merge($this->messages, $this->envChecker->getMessages());
+        $this->errors = array_merge($this->errors, $this->envChecker->getErrors());
 
         // Handle form submissions
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -42,19 +46,6 @@ class Installer {
         }
 
         $this->displayForm();
-    }
-
-    private function checkConfigWritable() {
-        $configFile = 'config.inc.php';
-        if (file_exists($configFile)) {
-            $this->configWritable = is_writable($configFile);
-        } else {
-            $this->configWritable = is_writable(dirname($configFile));
-        }
-
-        if (!$this->configWritable) {
-            $this->errors[] = "✗ " . __('config_not_writable');
-        }
     }
 
     private function testConnection() {
@@ -253,7 +244,7 @@ class Installer {
 
                     <h1 class="text-center"><?php echo __('installation'); ?></h1>
                     
-                    <?php if (!$this->configWritable): ?>
+                    <?php if (!$this->envChecker->isConfigWritable()): ?>
                         <div class="config-warning">
                             <?php echo __('config_not_writable'); ?>
                         </div>
@@ -389,7 +380,7 @@ class Installer {
 
                         <div class="row">
                             <div class="col">
-                                <button type="submit" name="install" class="button primary" <?php echo $this->configWritable ? '' : 'disabled'; ?>><?php echo __('install'); ?></button>
+                                <button type="submit" name="install" class="button primary" <?php echo $this->envChecker->isConfigWritable() ? '' : 'disabled'; ?>><?php echo __('install'); ?></button>
                             </div>
                         </div>
                     </form>

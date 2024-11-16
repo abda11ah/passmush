@@ -1,5 +1,8 @@
 <?php
-require_once 'db.php';
+// Define secure access constant
+define('SECURE_ACCESS', true);
+
+require_once 'db.inc.php';
 
 header('Content-Type: application/json');
 
