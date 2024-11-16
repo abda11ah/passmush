@@ -1,75 +1,7 @@
 <?php
 session_start();
 
-// Set language based on browser preference
-$browser_lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '', 0, 2);
-$lang = in_array($browser_lang, ['fr', 'en']) ? $browser_lang : 'en';
-
-if (isset($_GET['lang']) && in_array($_GET['lang'], ['fr', 'en'])) {
-    $lang = $_GET['lang'];
-}
-
-$translations = [
-    'en' => [
-        'installation' => 'Password Share Installation',
-        'progress' => 'Installation Progress:',
-        'errors' => 'Errors:',
-        'success' => 'Installation completed successfully!',
-        'failure' => 'Installation failed. Please fix the errors and try again.',
-        'go_to_app' => 'Go to Application',
-        'retry' => 'Retry Installation',
-        'php_version_ok' => 'PHP version %s is compatible',
-        'php_version_error' => 'PHP version 7.4.0 or higher is required. Current version: %s',
-        'pdo_ok' => 'PDO MySQL extension is installed',
-        'pdo_error' => 'PDO MySQL extension is required but not installed',
-        'openssl_ok' => 'OpenSSL extension is installed',
-        'openssl_error' => 'OpenSSL extension is required but not installed',
-        'keys_dir_created' => 'Keys directory created successfully',
-        'keys_dir_error' => 'Failed to create keys directory',
-        'keys_dir_writable' => 'Keys directory is writable',
-        'keys_dir_not_writable' => 'Keys directory is not writable. Please set proper permissions',
-        'keys_exist' => 'SSL keys already exist',
-        'keys_generated' => 'SSL keys generated successfully',
-        'keys_error' => 'Failed to generate SSL keys: %s',
-        'db_created' => 'Database created successfully',
-        'db_error' => 'Database creation failed: %s',
-        'tables_created' => 'Tables created successfully',
-        'tables_error' => 'Table creation failed: %s'
-    ],
-    'fr' => [
-        'installation' => 'Installation du Partage de Mot de Passe',
-        'progress' => 'Progression de l\'installation :',
-        'errors' => 'Erreurs :',
-        'success' => 'Installation terminée avec succès !',
-        'failure' => 'L\'installation a échoué. Veuillez corriger les erreurs et réessayer.',
-        'go_to_app' => 'Aller à l\'Application',
-        'retry' => 'Réessayer l\'Installation',
-        'php_version_ok' => 'Version PHP %s compatible',
-        'php_version_error' => 'PHP version 7.4.0 ou supérieure requise. Version actuelle : %s',
-        'pdo_ok' => 'Extension PDO MySQL installée',
-        'pdo_error' => 'Extension PDO MySQL requise mais non installée',
-        'openssl_ok' => 'Extension OpenSSL installée',
-        'openssl_error' => 'Extension OpenSSL requise mais non installée',
-        'keys_dir_created' => 'Répertoire des clés créé avec succès',
-        'keys_dir_error' => 'Échec de la création du répertoire des clés',
-        'keys_dir_writable' => 'Répertoire des clés accessible en écriture',
-        'keys_dir_not_writable' => 'Répertoire des clés non accessible en écriture. Veuillez définir les permissions appropriées',
-        'keys_exist' => 'Les clés SSL existent déjà',
-        'keys_generated' => 'Clés SSL générées avec succès',
-        'keys_error' => 'Échec de la génération des clés SSL : %s',
-        'db_created' => 'Base de données créée avec succès',
-        'db_error' => 'Échec de la création de la base de données : %s',
-        'tables_created' => 'Tables créées avec succès',
-        'tables_error' => 'Échec de la création des tables : %s'
-    ]
-];
-
-function __($key, ...$args) {
-    global $translations, $lang;
-    $text = $translations[$lang][$key] ?? $key;
-    return $args ? sprintf($text, ...$args) : $text;
-}
-
+require_once 'lang.php';
 require_once 'env.inc.php';
 require 'config.inc.php';
 
