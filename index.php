@@ -82,6 +82,45 @@ if ($envChecker->hasErrors()) {
             resize: vertical;
         }
     </style>
+    <script>
+    function generatePassword() {
+        const length = Math.floor(Math.random() * (16 - 8 + 1)) + 8; // Random length between 8 and 16
+        const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?!%@_-$*';
+        let password = '';
+        
+        // Ensure at least one of each required type
+        password += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)]; // Uppercase
+        password += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)]; // Lowercase
+        password += '0123456789'[Math.floor(Math.random() * 10)]; // Number
+        password += '?!%@_-$*'[Math.floor(Math.random() * 8)]; // Special char
+        
+        // Fill the rest randomly
+        for (let i = password.length; i < length; i++) {
+            password += charset[Math.floor(Math.random() * charset.length)];
+        }
+        
+        // Shuffle the password
+        password = password.split('').sort(() => Math.random() - 0.5).join('');
+        
+        const input = document.getElementById('password-input');
+        input.value = password;
+        input.classList.remove('blur');
+        
+        setTimeout(() => {
+            input.classList.add('blur');
+        }, 3000);
+    }
+
+    function switchTab(tabId, element) {
+        // Remove active class from all tabs and contents
+        document.querySelectorAll('.tabs a').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        // Add active class to selected tab and content
+        element.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+    }
+    </script>
 </head>
 <body>
     <div class="container">
