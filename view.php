@@ -171,7 +171,7 @@ if (!$row) {
                     <div class="col">
                         <label><?php echo __('password'); ?></label>
                         <div class="password-display">
-                            <?php require_once 'encryption.php'; $enc = new Encryption(); ?>
+                            <?php require_once 'enc.inc.php'; $enc = new Encryption(); ?>
                             <span id="password-text"><?php echo htmlspecialchars($enc->decrypt($row['data'])); ?></span>
                         </div>
                         <button id="copy-btn" onclick="copyToClipboard()" class="button primary"><?php echo __('copy_clipboard'); ?></button>

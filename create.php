@@ -45,7 +45,7 @@ if ($envChecker->hasErrors()) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_once 'db.php';
-    require_once 'encryption.php';
+    require_once 'enc.inc.php';
     
     $enc = new Encryption();
     $encrypted = $enc->encrypt($_POST['data']);
