@@ -32,6 +32,12 @@ class Installer {
                      ->generateSSLKeys()
                      ->createDatabase()
                      ->createTables();
+                
+                if (empty($this->errors)) {
+                    $_SESSION['install_messages'] = $this->messages;
+                    header('Location: install_success.php');
+                    exit;
+                }
             }
         }
 
@@ -59,6 +65,18 @@ class Installer {
                 $_POST['db_pass']
             );
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // If testing with existing database, check if it exists
+            if (isset($_POST['db_name']) && !empty($_POST['db_name'])) {
+                $stmt = $pdo->query("SHOW DATABASES LIKE '{$_POST['db_name']}'");
+                if ($stmt->rowCount() > 0) {
+                    $this->messages[] = "✓ " . __('db_exists');
+                } else {
+                    $this->errors[] = "✗ " . __('db_not_exists');
+                    return;
+                }
+            }
+
             $this->messages[] = "✓ " . __('db_connection_success');
         } catch (PDOException $e) {
             $this->errors[] = "✗ " . __('db_connection_error', $e->getMessage());
@@ -131,6 +149,11 @@ class Installer {
                            DEFAULT CHARACTER SET utf8mb4 
                            DEFAULT COLLATE utf8mb4_unicode_ci");
                 $this->messages[] = "✓ " . __('db_created');
+            } else {
+                // Verify the existing database is accessible
+                $dbname = $_POST['db_name'];
+                $pdo->exec("USE `$dbname`");
+                $this->messages[] = "✓ " . __('db_connected');
             }
         } catch (PDOException $e) {
             $this->errors[] = "✗ " . __('db_error', $e->getMessage());
@@ -206,7 +229,10 @@ class Installer {
                 function toggleDatabaseFields() {
                     const createType = document.querySelector('input[name="db_create"]:checked').value;
                     const newDbFields = document.getElementById('new-db-fields');
+                    const existingDbFields = document.getElementById('existing-db-fields');
+                    
                     newDbFields.classList.toggle('hidden', createType !== 'new');
+                    existingDbFields.classList.toggle('hidden', createType !== 'existing');
                 }
             </script>
         </head>
@@ -268,6 +294,12 @@ class Installer {
                                     <input type="password" id="test_pass" name="db_pass">
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="test_db"><?php echo __('db_name'); ?> (<?php echo __('optional'); ?>)</label>
+                                    <input type="text" id="test_db" name="db_name" placeholder="<?php echo __('existing_db_name'); ?>">
+                                </div>
+                            </div>
                             <button type="submit" name="test_connection" class="button"><?php echo __('test_connection'); ?></button>
                         </fieldset>
                     </form>
@@ -308,8 +340,16 @@ class Installer {
                             <div id="new-db-fields">
                                 <div class="row">
                                     <div class="col">
-                                        <label for="db_name"><?php echo __('db_name'); ?></label>
-                                        <input type="text" id="db_name" name="db_name" value="password_share" required>
+                                        <label for="new_db_name"><?php echo __('db_name'); ?></label>
+                                        <input type="text" id="new_db_name" name="db_name" value="password_share">
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="existing-db-fields" class="hidden">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="existing_db_name"><?php echo __('existing_db_name'); ?></label>
+                                        <input type="text" id="existing_db_name" name="db_name" placeholder="<?php echo __('enter_existing_db'); ?>">
                                     </div>
                                 </div>
                             </div>
@@ -331,15 +371,6 @@ class Installer {
                             </div>
                         </div>
                     </form>
-
-                    <?php if (empty($this->errors) && !empty($this->messages)): ?>
-                        <div class="row">
-                            <div class="col">
-                                <p class="success">✓ <?php echo __('success'); ?></p>
-                                <a href="index.php" class="button primary"><?php echo __('go_to_app'); ?></a>
-                            </div>
-                        </div>
-                    <?php endif; ?>
                 </div>
             </div>
         </body>

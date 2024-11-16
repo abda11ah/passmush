@@ -85,5 +85,17 @@ return [
     'db_connection_error' => 'Échec de la connexion à la base de données : %s',
     'config_write_success' => 'Fichier de configuration écrit avec succès',
     'config_write_error' => 'Échec de l\'écriture du fichier de configuration',
-    'config_not_writable' => 'Le fichier de configuration n\'est pas accessible en écriture. Veuillez définir les permissions appropriées pour config.inc.php'
+    'config_not_writable' => 'Le fichier de configuration n\'est pas accessible en écriture. Veuillez définir les permissions appropriées pour config.inc.php',
+        // Installation related translations
+    'install_warning' => 'Le fichier install.php existe toujours. Ceci représente un risque de sécurité et devrait être supprimé.',
+    'delete_install' => 'Supprimer install.php',
+    'confirm_delete_install' => 'Êtes-vous sûr de vouloir supprimer le fichier d\'installation ? Cette action est irréversible.',
+    'install_deleted' => 'Fichier d\'installation supprimé avec succès.',
+    'install_delete_error' => 'Erreur lors de la suppression du fichier d\'installation.',
+        // ... existing translations ...
+    'existing_db_name' => 'Nom de la Base de Données Existante',
+    'enter_existing_db' => 'Entrez le nom de votre base de données existante',
+    'db_exists' => 'La base de données existe et est accessible',
+    'db_not_exists' => 'La base de données n\'existe pas',
+    'db_connected' => 'Connexion réussie à la base de données existante',
 ];

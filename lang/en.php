@@ -85,5 +85,17 @@ return [
     'db_connection_error' => 'Database connection failed: %s',
     'config_write_success' => 'Configuration file written successfully',
     'config_write_error' => 'Failed to write configuration file',
-    'config_not_writable' => 'Configuration file is not writable. Please set proper write permissions for config.inc.php'
+    'config_not_writable' => 'Configuration file is not writable. Please set proper write permissions for config.inc.php',
+        // Installation related translations
+    'install_warning' => 'The install.php file still exists. This is a security risk and should be deleted.',
+    'delete_install' => 'Delete install.php',
+    'confirm_delete_install' => 'Are you sure you want to delete the installation file? This action cannot be undone.',
+    'install_deleted' => 'Installation file successfully deleted.',
+    'install_delete_error' => 'Error deleting installation file.',
+        // ... existing translations ...
+    'existing_db_name' => 'Existing Database Name',
+    'enter_existing_db' => 'Enter the name of your existing database',
+    'db_exists' => 'Database exists and is accessible',
+    'db_not_exists' => 'Database does not exist',
+    'db_connected' => 'Successfully connected to existing database',
 ];

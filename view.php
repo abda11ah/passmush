@@ -1,6 +1,7 @@
 <?php
 require_once 'lang.php';
 require_once 'env.inc.php';
+require_once 'header_warning.php';
 
 // Check environment before proceeding
 $envChecker = new EnvironmentChecker();
@@ -136,6 +137,25 @@ if (!$row) {
 </head>
 <body>
     <div class="container">
+        <?php 
+        showInstallWarning();
+        if (isset($_SESSION['success_message'])): ?>
+            <div class="success-message" style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 1rem; margin-bottom: 2rem; border-radius: 4px;">
+                <?php 
+                echo htmlspecialchars($_SESSION['success_message']);
+                unset($_SESSION['success_message']);
+                ?>
+            </div>
+        <?php endif; ?>
+        <?php if (isset($_SESSION['error_message'])): ?>
+            <div class="error-message" style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 1rem; margin-bottom: 2rem; border-radius: 4px;">
+                <?php 
+                echo htmlspecialchars($_SESSION['error_message']);
+                unset($_SESSION['error_message']);
+                ?>
+            </div>
+        <?php endif; ?>
+        
         <nav class="text-right">
             <a href="?lang=fr&id=<?php echo htmlspecialchars($id); ?>" class="<?php echo $_SESSION['lang'] === 'fr' ? 'active' : ''; ?>">Français</a> |
             <a href="?lang=en&id=<?php echo htmlspecialchars($id); ?>" class="<?php echo $_SESSION['lang'] === 'en' ? 'active' : ''; ?>">English</a>
@@ -150,7 +170,7 @@ if (!$row) {
                     <div class="col">
                         <label><?php echo __('password'); ?></label>
                         <div class="password-display">
-                            <?php require_once 'encryption.php';$enc = new Encryption();?>
+                            <?php require_once 'encryption.php'; $enc = new Encryption(); ?>
                             <span id="password-text"><?php echo htmlspecialchars($enc->decrypt($row['data'])); ?></span>
                         </div>
                         <button id="copy-btn" onclick="copyToClipboard()" class="button primary"><?php echo __('copy_clipboard'); ?></button>
