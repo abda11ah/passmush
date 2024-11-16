@@ -11,6 +11,7 @@ class Installer {
     private $errors = [];
     private $config = [];
     private $envChecker;
+    private $uploadsDir = 'uploads';
 
     public function __construct() {
         $this->envChecker = new EnvironmentChecker();
@@ -27,12 +28,22 @@ class Installer {
         $this->messages = array_merge($this->messages, $this->envChecker->getMessages());
         $this->errors = array_merge($this->errors, $this->envChecker->getErrors());
 
+        // Create uploads directory if it doesn't exist
+        if (!file_exists($this->uploadsDir)) {
+            if (mkdir($this->uploadsDir, 0755, true)) {
+                $this->messages[] = "✓ " . __('uploads_dir_created');
+            } else {
+                $this->errors[] = "✗ " . __('uploads_dir_error');
+            }
+        }
+
         // Handle form submissions
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_POST['test_connection'])) {
                 $this->testConnection();
             } elseif (isset($_POST['install'])) {
-                $this->saveConfig()
+                $logoPath = $this->handleLogoUpload();
+                $this->saveConfig($logoPath)
                      ->generateSSLKeys()
                      ->createDatabase()
                      ->createTables();
@@ -48,6 +59,41 @@ class Installer {
         $this->displayForm();
     }
 
+    private function handleLogoUpload() {
+        if (!isset($_FILES['company_logo']) || $_FILES['company_logo']['error'] === UPLOAD_ERR_NO_FILE) {
+            return '';
+        }
+
+        $file = $_FILES['company_logo'];
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        $maxSize = 5 * 1024 * 1024; // 5MB
+
+        // Validate file type
+        if (!in_array($file['type'], $allowedTypes)) {
+            $this->errors[] = "✗ " . __('logo_type_error');
+            return '';
+        }
+
+        // Validate file size
+        if ($file['size'] > $maxSize) {
+            $this->errors[] = "✗ " . __('logo_size_error');
+            return '';
+        }
+
+        // Generate unique filename
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = 'company_logo_' . uniqid() . '.' . $extension;
+        $destination = $this->uploadsDir . '/' . $filename;
+
+        if (move_uploaded_file($file['tmp_name'], $destination)) {
+            $this->messages[] = "✓ " . __('logo_uploaded');
+            return $destination;
+        } else {
+            $this->errors[] = "✗ " . __('logo_upload_error');
+            return '';
+        }
+    }
+
     private function testConnection() {
         try {
             $pdo = new PDO(
@@ -57,7 +103,6 @@ class Installer {
             );
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
-            // If testing connection with existing database
             if ($_POST['db_create'] === 'existing' && !empty($_POST['existing_db_name'])) {
                 try {
                     $pdo->query("USE " . $pdo->quote($_POST['existing_db_name']));
@@ -74,15 +119,19 @@ class Installer {
         }
     }
 
-    private function saveConfig() {
+    private function saveConfig($logoPath = '') {
         $config = "<?php\n";
+        $config .= "// Prevent direct access to this file\n";
+        $config .= "defined('SECURE_ACCESS') or die('Direct access to this file is not allowed');\n\n";
         $config .= "// Database configuration\n";
         $config .= "define('DBHOST', '" . addslashes($_POST['db_host']) . "');\n";
         $config .= "define('DBNAME', '" . addslashes($_POST['db_create'] === 'existing' ? $_POST['existing_db_name'] : $_POST['db_name']) . "');\n";
         $config .= "define('DBUSER', '" . addslashes($_POST['db_user']) . "');\n";
         $config .= "define('DBPASS', '" . addslashes($_POST['db_pass']) . "');\n";
         $config .= "define('DBTABLE_PREFIX', '" . addslashes($_POST['table_prefix']) . "'); // Optional table prefix\n";
-        $config .= "define('DBTABLE_NAME', '" . addslashes($_POST['table_name']) . "'); // Table name for storing passwords\n";
+        $config .= "define('DBTABLE_NAME', '" . addslashes($_POST['table_name']) . "'); // Table name for storing passwords\n\n";
+        $config .= "// Company configuration\n";
+        $config .= "define('COMPANY_LOGO', '" . addslashes($logoPath) . "'); // Path to company logo\n";
 
         if (file_put_contents('config.inc.php', $config) === false) {
             $this->errors[] = "✗ " . __('config_write_error');
@@ -143,7 +192,6 @@ class Installer {
                            DEFAULT COLLATE utf8mb4_unicode_ci");
                 $this->messages[] = "✓ " . __('db_created');
             } else {
-                // Verify existing database is accessible
                 $dbname = $_POST['existing_db_name'];
                 $pdo->query("USE `$dbname`");
                 $this->messages[] = "✓ " . __('db_exists');
@@ -318,7 +366,18 @@ class Installer {
                     </form>
 
                     <!-- Installation Form -->
-                    <form method="post" action="">
+                    <form method="post" action="" enctype="multipart/form-data">
+                        <fieldset>
+                            <legend><?php echo __('company_info'); ?></legend>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="company_logo"><?php echo __('company_logo'); ?></label>
+                                    <input type="file" id="company_logo" name="company_logo" accept="image/jpeg,image/png,image/gif">
+                                    <small><?php echo __('logo_requirements'); ?></small>
+                                </div>
+                            </div>
+                        </fieldset>
+
                         <fieldset>
                             <legend><?php echo __('db_configuration'); ?></legend>
                             <div class="row">

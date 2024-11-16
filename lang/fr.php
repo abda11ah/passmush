@@ -98,4 +98,13 @@ return [
     'db_exists' => 'La base de données existe et est accessible',
     'db_not_exists' => 'La base de données n\'existe pas',
     'db_connected' => 'Connexion réussie à la base de données existante',
+    'company_info' => 'Informations de l\'entreprise',
+    'company_logo' => 'Logo de l\'entreprise',
+    'logo_requirements' => 'Formats acceptés : JPG, PNG, GIF. Taille maximum : 5Mo',
+    'logo_type_error' => 'Format de logo invalide. Veuillez utiliser JPG, PNG ou GIF',
+    'logo_size_error' => 'Le fichier logo est trop volumineux. Taille maximum 5Mo',
+    'logo_upload_error' => 'Erreur lors du téléchargement du logo',
+    'logo_uploaded' => 'Logo de l\'entreprise téléchargé avec succès',
+    'uploads_dir_created' => 'Répertoire des téléchargements créé avec succès',
+    'uploads_dir_error' => 'Erreur lors de la création du répertoire des téléchargements',
 ];

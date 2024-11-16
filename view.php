@@ -9,62 +9,9 @@ if (!file_exists('config.inc.php') || (filesize('config.inc.php') === 0)) {
 
 require_once 'lang.php';
 require_once 'env.inc.php';
+require_once 'config.inc.php';
 require_once 'header_warning.php';
-
-// Check environment before proceeding
-$envChecker = new EnvironmentChecker();
-$envChecker->checkPHPVersion()
-        ->checkPDOExtension()
-        ->checkOpenSSLExtension()
-        ->checkKeysDirectory();
-
-if ($envChecker->hasErrors()) {
-    $errors = $envChecker->getErrors();
-    ?>
-    <!DOCTYPE html>
-    <html lang="<?php echo $_SESSION['lang']; ?>">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title><?php echo __('shared_password'); ?></title>
-            <link rel="stylesheet" href="chota.min.css">
-            <style>
-                body {
-                    padding: 2rem;
-                    background: var(--bg-secondary);
-                }
-                .container {
-                    max-width: 600px;
-                    margin: 0 auto;
-                }
-                .card {
-                    background: white;
-                    padding: 2rem;
-                    border-radius: 4px;
-                }
-                .text-right {
-                    text-align: right;
-                }
-                .error {
-                    color: var(--color-error);
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="card">
-                    <h3 class="error"><?php echo __('errors'); ?></h3>
-                    <?php foreach ($errors as $error): ?>
-                        <p class="error"><?php echo htmlspecialchars($error); ?></p>
-                    <?php endforeach; ?>
-                    <a href="install.php" class="button primary"><?php echo __('go_to_install'); ?></a>
-                </div>
-            </div>
-        </body>
-    </html>
-    <?php
-    exit;
-}
+require_once 'checkenv.inc.php';
 
 require_once 'db.inc.php';
 
@@ -99,7 +46,7 @@ if (!$row) {
         <link rel="stylesheet" href="chota.min.css">
         <style>
             body {
-                padding: 2rem;
+                padding: 0;
                 background: var(--bg-secondary);
             }
             .container {
@@ -185,14 +132,14 @@ if (!$row) {
                     ?>
                 </div>
             <?php endif; ?>
-                <?php if (isset($_SESSION['error_message'])): ?>
+            <?php if (isset($_SESSION['error_message'])): ?>
                 <div class="error-message" style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 1rem; margin-bottom: 2rem; border-radius: 4px;">
                     <?php
                     echo htmlspecialchars($_SESSION['error_message']);
                     unset($_SESSION['error_message']);
                     ?>
                 </div>
-<?php endif; ?>
+            <?php endif; ?>
 
             <nav class="text-right">
                 <a href="?lang=fr&id=<?php echo htmlspecialchars($id); ?>" class="<?php echo $_SESSION['lang'] === 'fr' ? 'active' : ''; ?>">Français</a> |
@@ -202,14 +149,15 @@ if (!$row) {
             <div class="card">
                 <?php if (isset($error)): ?>
                     <p class="error text-center"><?php echo htmlspecialchars($error); ?></p>
-<?php else: ?>
+                <?php else: ?>
                     <h3 class="text-center"><?php echo __('shared_password'); ?></h3>
                     <div class="row">
                         <div class="col">
                             <label><?php echo __('password'); ?></label>
                             <div class="password-display">
-    <?php require_once 'enc.inc.php';
-    $enc = new Encryption(); ?>
+                                <?php require_once 'enc.inc.php';
+                                $enc = new Encryption();
+                                ?>
                                 <span id="password-text"><?php echo htmlspecialchars($enc->decrypt($row['data'])); ?></span>
                             </div>
                             <button id="copy-btn" onclick="copyToClipboard()" class="button primary"><?php echo __('copy_clipboard'); ?></button>

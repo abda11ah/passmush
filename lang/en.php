@@ -98,4 +98,13 @@ return [
     'db_exists' => 'Database exists and is accessible',
     'db_not_exists' => 'Database does not exist',
     'db_connected' => 'Successfully connected to existing database',
+    'company_info' => 'Company Information',
+    'company_logo' => 'Company Logo',
+    'logo_requirements' => 'Accepted formats: JPG, PNG, GIF. Maximum size: 5MB',
+    'logo_type_error' => 'Invalid logo format. Please use JPG, PNG, or GIF',
+    'logo_size_error' => 'Logo file is too large. Maximum size is 5MB',
+    'logo_upload_error' => 'Error uploading logo',
+    'logo_uploaded' => 'Company logo uploaded successfully',
+    'uploads_dir_created' => 'Uploads directory created successfully',
+    'uploads_dir_error' => 'Error creating uploads directory',
 ];
