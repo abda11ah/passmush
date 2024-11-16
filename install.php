@@ -3,19 +3,17 @@ session_start();
 
 require_once 'lang.php';
 require_once 'env.inc.php';
-require 'config.inc.php';
 
 class Installer {
     private $messages = [];
     private $errors = [];
-    private $config = [
-        'host' => DBHOST,
-        'dbname' => DBNAME,
-        'username' => DBUSER,
-        'password' => DBPASS
-    ];
+    private $config = [];
+    private $configWritable = false;
 
     public function run() {
+        // Check if config file is writable
+        $this->checkConfigWritable();
+
         $envChecker = new EnvironmentChecker();
         $envChecker->checkPHPVersion()
                   ->checkPDOExtension()
@@ -25,13 +23,63 @@ class Installer {
         $this->messages = array_merge($this->messages, $envChecker->getMessages());
         $this->errors = array_merge($this->errors, $envChecker->getErrors());
 
-        if (!$envChecker->hasErrors()) {
-            $this->generateSSLKeys()
-                 ->createDatabase()
-                 ->createTables();
+        // Handle form submissions
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (isset($_POST['test_connection'])) {
+                $this->testConnection();
+            } elseif (isset($_POST['install'])) {
+                $this->saveConfig()
+                     ->generateSSLKeys()
+                     ->createDatabase()
+                     ->createTables();
+            }
         }
 
-        $this->displayResults();
+        $this->displayForm();
+    }
+
+    private function checkConfigWritable() {
+        $configFile = 'config.inc.php';
+        if (file_exists($configFile)) {
+            $this->configWritable = is_writable($configFile);
+        } else {
+            $this->configWritable = is_writable(dirname($configFile));
+        }
+
+        if (!$this->configWritable) {
+            $this->errors[] = "✗ " . __('config_not_writable');
+        }
+    }
+
+    private function testConnection() {
+        try {
+            $pdo = new PDO(
+                "mysql:host={$_POST['db_host']}", 
+                $_POST['db_user'], 
+                $_POST['db_pass']
+            );
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->messages[] = "✓ " . __('db_connection_success');
+        } catch (PDOException $e) {
+            $this->errors[] = "✗ " . __('db_connection_error', $e->getMessage());
+        }
+    }
+
+    private function saveConfig() {
+        $config = "<?php\n";
+        $config .= "// Database configuration\n";
+        $config .= "define('DBHOST', '" . addslashes($_POST['db_host']) . "');\n";
+        $config .= "define('DBNAME', '" . addslashes($_POST['db_name']) . "');\n";
+        $config .= "define('DBUSER', '" . addslashes($_POST['db_user']) . "');\n";
+        $config .= "define('DBPASS', '" . addslashes($_POST['db_pass']) . "');\n";
+
+        if (file_put_contents('config.inc.php', $config) === false) {
+            $this->errors[] = "✗ " . __('config_write_error');
+        } else {
+            $this->messages[] = "✓ " . __('config_write_success');
+            $this->config = $_POST;
+        }
+        return $this;
     }
 
     private function generateSSLKeys() {
@@ -71,18 +119,19 @@ class Installer {
     private function createDatabase() {
         try {
             $pdo = new PDO(
-                "mysql:host={$this->config['host']}", 
-                $this->config['username'], 
-                $this->config['password']
+                "mysql:host={$_POST['db_host']}", 
+                $_POST['db_user'], 
+                $_POST['db_pass']
             );
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            $dbname = $this->config['dbname'];
-            $pdo->exec("CREATE DATABASE IF NOT EXISTS `$dbname` 
-                       DEFAULT CHARACTER SET utf8mb4 
-                       DEFAULT COLLATE utf8mb4_unicode_ci");
-            
-            $this->messages[] = "✓ " . __('db_created');
+            if ($_POST['db_create'] === 'new') {
+                $dbname = $_POST['db_name'];
+                $pdo->exec("CREATE DATABASE IF NOT EXISTS `$dbname` 
+                           DEFAULT CHARACTER SET utf8mb4 
+                           DEFAULT COLLATE utf8mb4_unicode_ci");
+                $this->messages[] = "✓ " . __('db_created');
+            }
         } catch (PDOException $e) {
             $this->errors[] = "✗ " . __('db_error', $e->getMessage());
         }
@@ -93,13 +142,16 @@ class Installer {
     private function createTables() {
         try {
             $pdo = new PDO(
-                "mysql:host={$this->config['host']};dbname={$this->config['dbname']}", 
-                $this->config['username'], 
-                $this->config['password']
+                "mysql:host={$_POST['db_host']};dbname={$_POST['db_name']}", 
+                $_POST['db_user'], 
+                $_POST['db_pass']
             );
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            $pdo->exec("CREATE TABLE IF NOT EXISTS passwords (
+            $prefix = $_POST['table_prefix'];
+            $tableName = $prefix . $_POST['table_name'];
+
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `$tableName` (
                 id VARCHAR(32) PRIMARY KEY,
                 data TEXT NOT NULL,
                 expires_at INT NOT NULL,
@@ -116,7 +168,7 @@ class Installer {
         return $this;
     }
 
-    private function displayResults() {
+    private function displayForm() {
         global $lang;
         ?>
         <!DOCTYPE html>
@@ -134,7 +186,29 @@ class Installer {
                 .error { color: var(--color-error); }
                 .message { margin: 0.5rem 0; }
                 .text-right { text-align: right; }
+                fieldset { margin-bottom: 2rem; }
+                .hidden { display: none; }
+                .button[disabled] {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                    pointer-events: none;
+                }
+                .config-warning {
+                    background-color: #fff3cd;
+                    border: 1px solid #ffeeba;
+                    color: #856404;
+                    padding: 1rem;
+                    margin-bottom: 1rem;
+                    border-radius: 4px;
+                }
             </style>
+            <script>
+                function toggleDatabaseFields() {
+                    const createType = document.querySelector('input[name="db_create"]:checked').value;
+                    const newDbFields = document.getElementById('new-db-fields');
+                    newDbFields.classList.toggle('hidden', createType !== 'new');
+                }
+            </script>
         </head>
         <body>
             <div class="container">
@@ -146,6 +220,12 @@ class Installer {
 
                     <h1 class="text-center"><?php echo __('installation'); ?></h1>
                     
+                    <?php if (!$this->configWritable): ?>
+                        <div class="config-warning">
+                            <?php echo __('config_not_writable'); ?>
+                        </div>
+                    <?php endif; ?>
+
                     <?php if (!empty($this->messages)): ?>
                         <div class="row">
                             <div class="col">
@@ -168,17 +248,98 @@ class Installer {
                         </div>
                     <?php endif; ?>
 
-                    <div class="row">
-                        <div class="col">
-                            <?php if (empty($this->errors)): ?>
+                    <!-- Test Connection Form -->
+                    <form method="post" action="">
+                        <fieldset>
+                            <legend><?php echo __('test_connection'); ?></legend>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="test_host"><?php echo __('db_host'); ?></label>
+                                    <input type="text" id="test_host" name="db_host" value="localhost" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="test_user"><?php echo __('db_user'); ?></label>
+                                    <input type="text" id="test_user" name="db_user" value="root" required>
+                                </div>
+                                <div class="col">
+                                    <label for="test_pass"><?php echo __('db_pass'); ?></label>
+                                    <input type="password" id="test_pass" name="db_pass">
+                                </div>
+                            </div>
+                            <button type="submit" name="test_connection" class="button"><?php echo __('test_connection'); ?></button>
+                        </fieldset>
+                    </form>
+
+                    <!-- Installation Form -->
+                    <form method="post" action="">
+                        <fieldset>
+                            <legend><?php echo __('db_configuration'); ?></legend>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="db_host"><?php echo __('db_host'); ?></label>
+                                    <input type="text" id="db_host" name="db_host" value="localhost" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="db_user"><?php echo __('db_user'); ?></label>
+                                    <input type="text" id="db_user" name="db_user" value="root" required>
+                                </div>
+                                <div class="col">
+                                    <label for="db_pass"><?php echo __('db_pass'); ?></label>
+                                    <input type="password" id="db_pass" name="db_pass">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label><?php echo __('db_create_type'); ?></label>
+                                    <label>
+                                        <input type="radio" name="db_create" value="new" checked onchange="toggleDatabaseFields()">
+                                        <?php echo __('db_create_new'); ?>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="db_create" value="existing" onchange="toggleDatabaseFields()">
+                                        <?php echo __('db_use_existing'); ?>
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="new-db-fields">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="db_name"><?php echo __('db_name'); ?></label>
+                                        <input type="text" id="db_name" name="db_name" value="password_share" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="table_name"><?php echo __('table_name'); ?></label>
+                                    <input type="text" id="table_name" name="table_name" value="passwords" required>
+                                </div>
+                                <div class="col">
+                                    <label for="table_prefix"><?php echo __('table_prefix'); ?></label>
+                                    <input type="text" id="table_prefix" name="table_prefix" placeholder="<?php echo __('optional'); ?>">
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <div class="row">
+                            <div class="col">
+                                <button type="submit" name="install" class="button primary" <?php echo $this->configWritable ? '' : 'disabled'; ?>><?php echo __('install'); ?></button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <?php if (empty($this->errors) && !empty($this->messages)): ?>
+                        <div class="row">
+                            <div class="col">
                                 <p class="success">✓ <?php echo __('success'); ?></p>
                                 <a href="index.php" class="button primary"><?php echo __('go_to_app'); ?></a>
-                            <?php else: ?>
-                                <p class="error">✗ <?php echo __('failure'); ?></p>
-                                <button onclick="location.reload()" class="button error"><?php echo __('retry'); ?></button>
-                            <?php endif; ?>
+                            </div>
                         </div>
-                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </body>

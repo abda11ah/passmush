@@ -1,6 +1,6 @@
 <?php
-// Passmush MariaDB configuration
-define('DBHOST','127.0.0.1');
-define('DBNAME','_share');
-define('DBUSER','root');
-define('DBPASS','0000');
+// Database configuration
+define('DBHOST', 'localhost');
+define('DBNAME', 'password_share');
+define('DBUSER', 'root');
+define('DBPASS', '0000');

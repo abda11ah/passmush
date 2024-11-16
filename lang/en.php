@@ -1,7 +1,6 @@
 <?php
 return [
     'page_title' => 'Secure Password Share',
-    'date_format' => 'Y-m-d @ H:i:s',
     'password_to_share' => 'Password to share',
     'text_to_share' => 'Secret text to share',
     'share_password' => 'Share Password',
@@ -51,6 +50,7 @@ return [
     'db_error' => 'Database creation failed: %s',
     'tables_created' => 'Tables created successfully',
     'tables_error' => 'Table creation failed: %s',
+    'date_format' => 'Y-m-d @ H:i:s',
     'time_options' => [
         '1' => '1 hour',
         '2' => '2 hours',
@@ -66,5 +66,24 @@ return [
         '5' => '5 times',
         '10' => '10 times',
         '0' => 'Unlimited'
-    ]
+    ],
+    // Database configuration translations
+    'test_connection' => 'Test Database Connection',
+    'db_configuration' => 'Database Configuration',
+    'db_host' => 'Database Host',
+    'db_user' => 'Database Username',
+    'db_pass' => 'Database Password',
+    'db_name' => 'Database Name',
+    'db_create_type' => 'Database Creation',
+    'db_create_new' => 'Create new database',
+    'db_use_existing' => 'Use existing database',
+    'table_name' => 'Table Name',
+    'table_prefix' => 'Table Prefix',
+    'optional' => 'Optional',
+    'install' => 'Install',
+    'db_connection_success' => 'Database connection successful',
+    'db_connection_error' => 'Database connection failed: %s',
+    'config_write_success' => 'Configuration file written successfully',
+    'config_write_error' => 'Failed to write configuration file',
+    'config_not_writable' => 'Configuration file is not writable. Please set proper write permissions for config.inc.php'
 ];

@@ -1,7 +1,6 @@
 <?php
 return [
     'page_title' => 'Partage Sécurisé de Mot de Passe',
-    'date_format' => 'd-m-Y à H:i:s',
     'password_to_share' => 'Mot de passe à partager',
     'text_to_share' => 'Texte secret à partager',
     'share_password' => 'Partager un Mot de Passe',
@@ -51,6 +50,7 @@ return [
     'db_error' => 'Échec de la création de la base de données : %s',
     'tables_created' => 'Tables créées avec succès',
     'tables_error' => 'Échec de la création des tables : %s',
+    'date_format' => 'd-m-Y à H:i:s',
     'time_options' => [
         '1' => '1 heure',
         '2' => '2 heures',
@@ -66,5 +66,24 @@ return [
         '5' => '5 fois',
         '10' => '10 fois',
         '0' => 'Illimité'
-    ]
+    ],
+    // Database configuration translations
+    'test_connection' => 'Tester la Connexion',
+    'db_configuration' => 'Configuration de la Base de Données',
+    'db_host' => 'Hôte de la Base de Données',
+    'db_user' => 'Nom d\'Utilisateur',
+    'db_pass' => 'Mot de Passe',
+    'db_name' => 'Nom de la Base de Données',
+    'db_create_type' => 'Création de la Base de Données',
+    'db_create_new' => 'Créer une nouvelle base de données',
+    'db_use_existing' => 'Utiliser une base de données existante',
+    'table_name' => 'Nom de la Table',
+    'table_prefix' => 'Préfixe de Table',
+    'optional' => 'Optionnel',
+    'install' => 'Installer',
+    'db_connection_success' => 'Connexion à la base de données réussie',
+    'db_connection_error' => 'Échec de la connexion à la base de données : %s',
+    'config_write_success' => 'Fichier de configuration écrit avec succès',
+    'config_write_error' => 'Échec de l\'écriture du fichier de configuration',
+    'config_not_writable' => 'Le fichier de configuration n\'est pas accessible en écriture. Veuillez définir les permissions appropriées pour config.inc.php'
 ];
