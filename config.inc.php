@@ -5,3 +5,4 @@ define('DBNAME', '_share');
 define('DBUSER', 'root');
 define('DBPASS', '0000');
 define('DBTABLE_PREFIX', ''); // Optional table prefix
+define('DBTABLE_NAME', 'passwords'); // Table name for storing passwords

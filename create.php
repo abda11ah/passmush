@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $expiration = time() + ($expires * 3600);
     
     // Store the encrypted data
-    $table = DBTABLE_PREFIX . 'passwords';
+    $table = DBTABLE_PREFIX . DBTABLE_NAME;
     $stmt = $pdo->prepare("INSERT INTO {$table} (id, data, expires_at, view_limit, created_at) VALUES (?, ?, ?, ?, ?)");
     $stmt->execute([$id, $encrypted, $expiration, $view_limit, time()]);
     

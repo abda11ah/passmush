@@ -53,7 +53,7 @@ if (!isset($_GET['id'])) {
 
 $id = $_GET['id'];
 $current_time = time();
-$table = DBTABLE_PREFIX . 'passwords';
+$table = DBTABLE_PREFIX . DBTABLE_NAME;
 $stmt = $pdo->prepare("SELECT * FROM {$table} WHERE id = ? AND expires_at > ?");
 $stmt->execute([$id, $current_time]);
 $row = $stmt->fetch();

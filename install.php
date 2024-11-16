@@ -91,6 +91,7 @@ class Installer {
         $config .= "define('DBUSER', '" . addslashes($_POST['db_user']) . "');\n";
         $config .= "define('DBPASS', '" . addslashes($_POST['db_pass']) . "');\n";
         $config .= "define('DBTABLE_PREFIX', '" . addslashes($_POST['table_prefix']) . "'); // Optional table prefix\n";
+        $config .= "define('DBTABLE_NAME', '" . addslashes($_POST['table_name']) . "'); // Table name for storing passwords\n";
 
         if (file_put_contents('config.inc.php', $config) === false) {
             $this->errors[] = "✗ " . __('config_write_error');
@@ -174,7 +175,7 @@ class Installer {
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             $prefix = $_POST['table_prefix'];
-            $tableName = $prefix . 'passwords';
+            $tableName = $prefix . $_POST['table_name'];
 
             $pdo->exec("CREATE TABLE IF NOT EXISTS `$tableName` (
                 id VARCHAR(32) PRIMARY KEY,
