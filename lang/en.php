@@ -1,6 +1,7 @@
 <?php
 return [
     'page_title' => 'Secure Password Share',
+    'date_format' => 'Y-m-d @ H:i:s',
     'password_to_share' => 'Password to share',
     'text_to_share' => 'Secret text to share',
     'share_password' => 'Share Password',

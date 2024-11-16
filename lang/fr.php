@@ -1,6 +1,7 @@
 <?php
 return [
     'page_title' => 'Partage Sécurisé de Mot de Passe',
+    'date_format' => 'd-m-Y à H:i:s',
     'password_to_share' => 'Mot de passe à partager',
     'text_to_share' => 'Texte secret à partager',
     'share_password' => 'Partager un Mot de Passe',

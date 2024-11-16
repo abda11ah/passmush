@@ -54,16 +54,16 @@ $id = $_GET['id'];
 $current_time = time();
 $stmt = $pdo->prepare("SELECT * FROM passwords WHERE id = ? AND expires_at > ?");
 $stmt->execute([$id, $current_time]);
-$password = $stmt->fetch();
+$row = $stmt->fetch();
 
-if (!$password) {
+if (!$row) {
     $error = __('link_expired');
-} elseif ($password['view_limit'] > 0 && $password['view_count'] >= $password['view_limit']) {
+} elseif ($row['view_limit'] > 0 && $row['view_count'] >= $row['view_limit']) {
     $error = __('max_views_reached');
 } else {
     $stmt = $pdo->prepare("UPDATE passwords SET view_count = view_count + 1 WHERE id = ?");
     $stmt->execute([$id]);
-    $password['view_count']++;
+    $row['view_count']++;
 }
 ?>
 <!DOCTYPE html>
@@ -150,8 +150,8 @@ if (!$password) {
                     <div class="col">
                         <label><?php echo __('password'); ?></label>
                         <div class="password-display">
-                            <?php require_once 'encryption.php';$encryption = new Encryption();?>
-                            <span id="password-text"><?php echo htmlspecialchars($encryption->decrypt($password['password'])); ?></span>
+                            <?php require_once 'encryption.php';$enc = new Encryption();?>
+                            <span id="password-text"><?php echo htmlspecialchars($enc->decrypt($row['data'])); ?></span>
                         </div>
                         <button id="copy-btn" onclick="copyToClipboard()" class="button primary"><?php echo __('copy_clipboard'); ?></button>
                     </div>
@@ -159,9 +159,9 @@ if (!$password) {
                 <div class="row">
                     <div class="col">
                         <small>
-                            <p><?php echo __('expires'); ?> <?php echo date('Y-m-d H:i:s', $password['expires_at']); ?></p>
-                            <?php if ($password['view_limit'] > 0): ?>
-                                <p><?php echo __('views_remaining'); ?> <?php echo $password['view_limit'] - $password['view_count']; ?> <?php echo __('of'); ?> <?php echo $password['view_limit']; ?></p>
+                            <p><?php echo __('expires'); ?> <?php echo date(__('date_format'), $row['expires_at']); ?></p>
+                            <?php if ($row['view_limit'] > 0): ?>
+                                <p><?php echo __('views_remaining'); ?> <?php echo $row['view_limit'] - $row['view_count']; ?> <?php echo __('of'); ?> <?php echo $row['view_limit']; ?></p>
                             <?php endif; ?>
                         </small>
                     </div>

@@ -101,7 +101,7 @@ class Installer {
 
             $pdo->exec("CREATE TABLE IF NOT EXISTS passwords (
                 id VARCHAR(32) PRIMARY KEY,
-                password TEXT NOT NULL,
+                data TEXT NOT NULL,
                 expires_at INT NOT NULL,
                 view_limit INT NOT NULL DEFAULT 0,
                 view_count INT NOT NULL DEFAULT 0,
