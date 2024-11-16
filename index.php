@@ -69,6 +69,17 @@ if ($envChecker->hasErrors()) {
         .password-group input.blur:focus {
             filter: none;
         }
+        .tab-content {
+            display: none;
+            padding-top: 2rem;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
     </style>
     <script>
     function generatePassword() {
@@ -98,6 +109,16 @@ if ($envChecker->hasErrors()) {
             input.classList.add('blur');
         }, 3000);
     }
+
+    function switchTab(tabId, element) {
+        // Remove active class from all tabs and contents
+        document.querySelectorAll('.tabs a').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        // Add active class to selected tab and content
+        element.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+    }
     </script>
 </head>
 <body>
@@ -110,43 +131,91 @@ if ($envChecker->hasErrors()) {
         <h1 class="text-center"><?php echo __('page_title'); ?></h1>
         
         <div class="card">
-            <form action="create.php" method="POST">
-                <div class="row">
-                    <div class="col">
-                        <label><?php echo __('password_to_share'); ?></label>
-                        <div class="password-group">
-                            <input type="text" name="password" id="password-input" required onmouseover="this.classList.remove('blur');" onmouseout="if (this.value.trim() !== '') {this.classList.add('blur');}">
-                            <button type="button" onclick="generatePassword()" class="button outline">
-                                <?php echo __('generate'); ?>
-                            </button>
+            <nav class="tabs">
+                <a href="#" class="active" onclick="switchTab('password-tab', this); return false;"><?php echo __('share_password'); ?></a>
+                <a href="#" onclick="switchTab('text-tab', this); return false;"><?php echo __('share_text'); ?></a>
+            </nav>
+
+            <div id="password-tab" class="tab-content active">
+                <form action="create.php" method="POST">
+                    <input type="hidden" name="type" value="password">
+                    <div class="row">
+                        <div class="col">
+                            <label><?php echo __('password_to_share'); ?></label>
+                            <div class="password-group">
+                                <input type="text" name="password" id="password-input" required onmouseover="this.classList.remove('blur');" onmouseout="if (this.value.trim() !== '') {this.classList.add('blur');}">
+                                <button type="button" onclick="generatePassword()" class="button outline">
+                                    <?php echo __('generate'); ?>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col">
-                        <label><?php echo __('expires_after'); ?></label>
-                        <select name="expires" required>
-                            <?php foreach (__('time_options') as $value => $label): ?>
-                                <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <label><?php echo __('expires_after'); ?></label>
+                            <select name="expires" required>
+                                <?php foreach (__('time_options') as $value => $label): ?>
+                                    <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col">
-                        <label><?php echo __('view_limit'); ?></label>
-                        <select name="view_limit" required>
-                            <?php foreach (__('view_options') as $value => $label): ?>
-                                <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                    <div class="row">
+                        <div class="col">
+                            <label><?php echo __('view_limit'); ?></label>
+                            <select name="view_limit" required>
+                                <?php foreach (__('view_options') as $value => $label): ?>
+                                    <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                
-                <div align="center"><button type="submit" class="button primary"><?php echo __('generate_link'); ?></button></div>
-            </form>
+                    
+                    <div align="center">
+                        <button type="submit" class="button primary"><?php echo __('generate_link'); ?></button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="text-tab" class="tab-content">
+                <form action="create.php" method="POST">
+                    <input type="hidden" name="type" value="text">
+                    <div class="row">
+                        <div class="col">
+                            <label><?php echo __('text_to_share'); ?></label>
+                            <textarea name="text" required></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <label><?php echo __('expires_after'); ?></label>
+                            <select name="expires" required>
+                                <?php foreach (__('time_options') as $value => $label): ?>
+                                    <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <label><?php echo __('view_limit'); ?></label>
+                            <select name="view_limit" required>
+                                <?php foreach (__('view_options') as $value => $label): ?>
+                                    <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div align="center">
+                        <button type="submit" class="button primary"><?php echo __('generate_link'); ?></button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </body>

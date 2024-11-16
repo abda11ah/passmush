@@ -150,7 +150,8 @@ if (!$password) {
                     <div class="col">
                         <label><?php echo __('password'); ?></label>
                         <div class="password-display">
-                            <span id="password-text"><?php echo htmlspecialchars($password['original_password']); ?></span>
+                            <?php require_once 'encryption.php';$encryption = new Encryption();?>
+                            <span id="password-text"><?php echo htmlspecialchars($encryption->decrypt($password['password'])); ?></span>
                         </div>
                         <button id="copy-btn" onclick="copyToClipboard()" class="button primary"><?php echo __('copy_clipboard'); ?></button>
                     </div>
