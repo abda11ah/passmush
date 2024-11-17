@@ -3,7 +3,7 @@
 defined('SECURE_ACCESS') or die('Direct access to this file is not allowed');
 
 function showHeader() {
-    $logo = COMPANY_LOGO ? '<img src="' . htmlspecialchars(COMPANY_LOGO) . '" alt="Company Logo" style="max-height: 50px; margin-right: 1rem;">' : '';
+    $logo = COMPANY_LOGO ? '<img src="' . htmlspecialchars(COMPANY_LOGO) . '" alt="Company Logo" style="max-height: 8rem; margin-right: 1rem;">' : '';
     $current_uri = $_SERVER['REQUEST_URI'];
     // Remove existing lang parameter if present
     $base_uri = preg_replace('/([?&])lang=[^&]*(&|$)/', '$1', $current_uri);
