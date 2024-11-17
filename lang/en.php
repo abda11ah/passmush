@@ -113,4 +113,6 @@ return [
     'error_occurred' => 'An Error Occurred: ',
     'return_home' => 'Return to Home',
     'rate_limit_exceeded' => 'You are creating passwords too quickly. Please wait a minute and try again.',
+    'hide_text' => 'Hide text',
+    'show_text' => 'Show text'
 ];

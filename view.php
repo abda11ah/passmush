@@ -1,8 +1,8 @@
 <?php
 // Define secure access constant
 define('SECURE_ACCESS', true);
-session_start();
 
+session_start();
 require_once 'lang.php';
 require_once 'env.inc.php';
 require_once 'header_warning.php';
@@ -58,7 +58,13 @@ if (!$row) {
                 background: var(--bg-secondary);
                 padding: 1rem;
                 border-radius: 4px;
+                border: 1px solid var(--color-primary);
                 font-family: monospace;
+                position: relative;
+            }
+            .blur {
+                filter: blur(5px);
+                transition: filter 0.3s ease;
             }
             .error {
                 color: var(--color-error);
@@ -75,6 +81,22 @@ if (!$row) {
             .button.error:hover {
                 background: var(--color-error);
                 filter: brightness(90%);
+            }
+            .visibility-toggle {
+                position: absolute;
+                right: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+                background: var(--color-primary);
+                color: white;
+                border: none;
+                padding: 0.5rem 1rem;
+                border-radius: 4px;
+                cursor: pointer;
+                z-index: 1;
+            }
+            .visibility-toggle:hover {
+                opacity: 0.9;
             }
         </style>
         <script>
@@ -108,6 +130,19 @@ if (!$row) {
                         }
                     })
                     .catch(() => alert('<?= __('destroy_error'); ?>'));
+                }
+            }
+
+            function toggleVisibility() {
+                const passwordText = document.getElementById('password-text');
+                const toggleBtn = document.getElementById('visibility-toggle');
+                
+                if (passwordText.classList.contains('blur')) {
+                    passwordText.classList.remove('blur');
+                    toggleBtn.textContent = '<?= __('hide_text'); ?>';
+                } else {
+                    passwordText.classList.add('blur');
+                    toggleBtn.textContent = '<?= __('show_text'); ?>';
                 }
             }
         </script>
@@ -145,8 +180,9 @@ if (!$row) {
                                 <?php require_once 'crypt.inc.php';
                                 $enc = new Encryption();
                                 ?>
-                                <span id="password-text"><?= nl2br(htmlspecialchars($enc->decrypt($row['data']))); ?></span>
-                            </div>
+                                <span id="password-text" class="blur" onclick="this.classList.remove('blur');"><?= nl2br(htmlspecialchars($enc->decrypt($row['data']))); ?></span>
+                                <button id="visibility-toggle" class="visibility-toggle" onclick="toggleVisibility();"><?= __('show_text'); ?></button>
+                            </div><br />
                             <button id="copy-btn" onclick="copyToClipboard()" class="button primary"><?= __('copy_clipboard'); ?></button>
                         </div>
                     </div>
