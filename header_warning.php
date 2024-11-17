@@ -15,10 +15,10 @@ function showHeader() {
     ?>
     <header style="background: white; padding: 1rem; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
         <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
-            <div style="display: flex; align-items: center;">
+            <a href="index.php" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
                 <?= $logo; ?>
                 <h1 style="margin: 0;"><?= __('page_title'); ?></h1>
-            </div>
+            </a>
             <nav>
                 <a href="<?= $base_uri . $separator ?>lang=fr" class="<?= $_SESSION['lang'] === 'fr' ? 'active' : ''; ?>">Français</a> |
                 <a href="<?= $base_uri . $separator ?>lang=en" class="<?= $_SESSION['lang'] === 'en' ? 'active' : ''; ?>">English</a>
