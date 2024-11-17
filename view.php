@@ -4,7 +4,6 @@ define('SECURE_ACCESS', true);
 
 require_once 'lang.php';
 require_once 'env.inc.php';
-require_once 'config.inc.php';
 require_once 'header_warning.php';
 require_once 'checkenv.inc.php';
 require_once 'db.inc.php';
@@ -151,7 +150,7 @@ if (!$row) {
                                 <?php require_once 'crypt.inc.php';
                                 $enc = new Encryption();
                                 ?>
-                                <span id="password-text"><?php echo htmlspecialchars($enc->decrypt($row['data'])); ?></span>
+                                <span id="password-text"><?php echo nl2br(htmlspecialchars($enc->decrypt($row['data']))); ?></span>
                             </div>
                             <button id="copy-btn" onclick="copyToClipboard()" class="button primary"><?php echo __('copy_clipboard'); ?></button>
                         </div>

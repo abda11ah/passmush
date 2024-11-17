@@ -19,7 +19,7 @@ return [
     'link_expired' => 'This link has expired or doesn\'t exist.',
     'max_views_reached' => 'This password has reached its maximum view limit.',
     'share_success' => 'Password Shared Successfully!',
-    'share_link' => 'Share this secure link:',
+    'share_link' => 'Here is the secure link:',
     'generate' => 'Generate',
     'destroy_password' => 'Destroy Password',
     'confirm_destroy' => 'Are you sure you want to destroy this password? This action cannot be undone.',

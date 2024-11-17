@@ -19,7 +19,7 @@ return [
     'link_expired' => 'Ce lien a expiré ou n\'existe pas.',
     'max_views_reached' => 'Ce mot de passe a atteint sa limite maximale de vues.',
     'share_success' => 'Mot de Passe Partagé avec Succès!',
-    'share_link' => 'Partagez ce lien sécurisé:',
+    'share_link' => 'Voici le lien sécurisé :',
     'generate' => 'Générer',
     'destroy_password' => 'Détruire le Mot de Passe',
     'confirm_destroy' => 'Êtes-vous sûr de vouloir détruire ce mot de passe ? Cette action est irréversible.',
