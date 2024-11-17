@@ -3,6 +3,14 @@
 define('SECURE_ACCESS', true);
 session_start();
 require_once 'lang.php';
+
+$current_uri = $_SERVER['REQUEST_URI'];
+$base_uri = preg_replace('/([?&])lang=[^&]*(&|$)/', '$1', $current_uri);
+$separator = (strpos($base_uri, '?') !== false) ? '&' : '?';
+if (substr($base_uri, -1) === '&') {
+    $base_uri = rtrim($base_uri, '&');
+    $separator = '&';
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= $_SESSION['lang']; ?>">
@@ -23,8 +31,8 @@ require_once 'lang.php';
     <div class="container">
         <div class="card">
             <div class="text-right">
-                <a href="?lang=fr" class="<?= $_SESSION['lang'] === 'fr' ? 'active' : ''; ?>">Français</a> |
-                <a href="?lang=en" class="<?= $_SESSION['lang'] === 'en' ? 'active' : ''; ?>">English</a>
+                <a href="<?= $base_uri . $separator ?>lang=fr" class="<?= $_SESSION['lang'] === 'fr' ? 'active' : ''; ?>">Français</a> |
+                <a href="<?= $base_uri . $separator ?>lang=en" class="<?= $_SESSION['lang'] === 'en' ? 'active' : ''; ?>">English</a>
             </div>
 
             <h1 class="text-center"><?= __('installation'); ?></h1>
