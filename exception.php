@@ -1,6 +1,7 @@
 <?php
 // Define secure access constant
 define('SECURE_ACCESS', true);
+session_start();
 
 require_once 'lang.php';
 require_once 'config.inc.php';
@@ -11,11 +12,11 @@ $error_message = $_SESSION['exception_error'] ?? 'An unknown error occurred';
 unset($_SESSION['exception_error']);
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $_SESSION['lang']; ?>">
+<html lang="<?= $_SESSION['lang']; ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo __('error_occurred'); ?></title>
+    <title><?= __('error_occurred'); ?></title>
     <link rel="stylesheet" href="chota.min.css">
     <style>
         body {
@@ -23,7 +24,6 @@ unset($_SESSION['exception_error']);
             background: var(--bg-secondary);
         }
         .container {
-            max-width: 600px;
             margin: 0 auto;
         }
         .card {
@@ -58,12 +58,12 @@ unset($_SESSION['exception_error']);
         <?php showInstallWarning(); ?>
         <div class="card">
             <div class="error-icon">⚠️</div>
-            <h2 class="text-center"><?php echo __('error_occurred'); ?></h2>
+            <h2 class="text-center"><?= __('error_occurred'); ?></h2>
             <div class="error-message">
-                <?php echo htmlspecialchars($error_message); ?>
+                <?= htmlspecialchars($error_message); ?>
             </div>
             <div class="button-container">
-                <a href="index.php" class="button primary"><?php echo __('return_home'); ?></a>
+                <a href="index.php" class="button primary"><?= __('return_home'); ?></a>
             </div>
         </div>
     </div>

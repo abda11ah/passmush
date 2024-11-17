@@ -2,10 +2,13 @@
 // Define secure access constant
 define('SECURE_ACCESS', true);
 
+
 if (!file_exists('config.inc.php') || (filesize('config.inc.php') === 0)) {
     header('Location: install.php');
     exit();
 }
+
+session_start();
 
 require_once 'lang.php';
 require_once 'env.inc.php';
@@ -15,15 +18,15 @@ require_once 'checkenv.inc.php';
 
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $_SESSION['lang']; ?>">
+<html lang="<?= $_SESSION['lang']; ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo __('page_title'); ?></title>
+    <title><?= __('page_title'); ?></title>
     <link rel="stylesheet" href="chota.min.css">
     <style>
         body { padding: 0; background: var(--bg-secondary); }
-        .container { max-width: 600px; margin: 0 auto; }
+        .container { margin: 0 auto; }
         .card { background: white; padding: 2rem; border-radius: 4px; }
         .password-group {
             display: flex;
@@ -114,20 +117,19 @@ require_once 'checkenv.inc.php';
         
         <div class="card">
             <nav class="tabs">
-                <a href="#" class="active" onclick="switchTab('password-tab', this); return false;"><?php echo __('share_password'); ?></a>
-                <a href="#" onclick="switchTab('text-tab', this); return false;"><?php echo __('share_text'); ?></a>
+                <a href="#" class="active" onclick="switchTab('password-tab', this); return false;"><?= __('share_password'); ?></a>
+                <a href="#" onclick="switchTab('text-tab', this); return false;"><?= __('share_text'); ?></a>
             </nav>
-
             <div id="password-tab" class="tab-content active">
                 <form action="create.inc.php" method="POST">
                     <input type="hidden" name="type" value="password">
                     <div class="row">
                         <div class="col">
-                            <label><?php echo __('password_to_share'); ?></label>
+                            <label><?= __('password_to_share'); ?></label>
                             <div class="password-group">
                                 <input type="text" name="data" id="password-input" required onmouseover="this.classList.remove('blur');" onmouseout="if (this.value.trim() !== '') {this.classList.add('blur');}">
                                 <button type="button" onclick="generatePassword()" class="button outline">
-                                    <?php echo __('generate'); ?>
+                                    <?= __('generate'); ?>
                                 </button>
                             </div>
                         </div>
@@ -135,10 +137,10 @@ require_once 'checkenv.inc.php';
                     
                     <div class="row">
                         <div class="col">
-                            <label><?php echo __('expires_after'); ?></label>
+                            <label><?= __('expires_after'); ?></label>
                             <select name="expires" required>
                                 <?php foreach (__('time_options') as $value => $label): ?>
-                                    <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
+                                    <option value="<?= $value; ?>"><?= $label; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -146,17 +148,17 @@ require_once 'checkenv.inc.php';
 
                     <div class="row">
                         <div class="col">
-                            <label><?php echo __('view_limit'); ?></label>
+                            <label><?= __('view_limit'); ?></label>
                             <select name="view_limit" required>
                                 <?php foreach (__('view_options') as $value => $label): ?>
-                                    <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
+                                    <option value="<?= $value; ?>"><?= $label; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
                     
                     <div align="center">
-                        <button type="submit" class="button primary"><?php echo __('generate_link'); ?></button>
+                        <button type="submit" class="button primary"><?= __('generate_link'); ?></button>
                     </div>
                 </form>
             </div>
@@ -166,17 +168,17 @@ require_once 'checkenv.inc.php';
                     <input type="hidden" name="type" value="text">
                     <div class="row">
                         <div class="col">
-                            <label><?php echo __('text_to_share'); ?></label>
+                            <label><?= __('text_to_share'); ?></label>
                             <textarea name="data" required></textarea>
                         </div>
                     </div>
                     
                     <div class="row">
                         <div class="col">
-                            <label><?php echo __('expires_after'); ?></label>
+                            <label><?= __('expires_after'); ?></label>
                             <select name="expires" required>
                                 <?php foreach (__('time_options') as $value => $label): ?>
-                                    <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
+                                    <option value="<?= $value; ?>"><?= $label; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -184,17 +186,17 @@ require_once 'checkenv.inc.php';
 
                     <div class="row">
                         <div class="col">
-                            <label><?php echo __('view_limit'); ?></label>
+                            <label><?= __('view_limit'); ?></label>
                             <select name="view_limit" required>
                                 <?php foreach (__('view_options') as $value => $label): ?>
-                                    <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
+                                    <option value="<?= $value; ?>"><?= $label; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
                     
                     <div align="center">
-                        <button type="submit" class="button primary"><?php echo __('generate_link'); ?></button>
+                        <button type="submit" class="button primary"><?= __('generate_link'); ?></button>
                     </div>
                 </form>
             </div>

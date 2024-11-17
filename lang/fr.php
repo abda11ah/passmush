@@ -112,4 +112,5 @@ return [
         // Exception page translations
     'error_occurred' => 'Une Erreur est Survenue : ',
     'return_home' => 'Retour à l\'Accueil',
+    'rate_limit_exceeded' => 'Vous créez des mots de passe trop rapidement. Veuillez attendre une minute et réessayer.',
 ];

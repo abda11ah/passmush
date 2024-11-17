@@ -1,13 +1,12 @@
 <?php
-require_once 'lang.php';
 require_once 'header_warning.php';
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $_SESSION['lang']; ?>">
+<html lang="<?= $_SESSION['lang']; ?>">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title><?php echo __('share_success'); ?></title>
+        <title><?= __('share_success'); ?></title>
         <link rel="stylesheet" href="chota.min.css">
         <style>
             body {
@@ -15,7 +14,6 @@ require_once 'header_warning.php';
                 background: var(--bg-secondary);
             }
             .container {
-                max-width: 600px;
                 margin: 0 auto;
             }
             .card {
@@ -58,25 +56,19 @@ require_once 'header_warning.php';
                     ?>
                 </div>
             <?php endif; ?>
-
-            <nav class="text-right">
-                <a href="?lang=fr" class="<?php echo $_SESSION['lang'] === 'fr' ? 'active' : ''; ?>">Français</a> |
-                <a href="?lang=en" class="<?php echo $_SESSION['lang'] === 'en' ? 'active' : ''; ?>">English</a>
-            </nav>
-
             <div class="card">
-                <h3 class="text-center success-title"><?php echo __('share_success'); ?></h3>
+                <h3 class="text-center success-title"><?= __('share_success'); ?></h3>
 
                 <div class="row">
                     <div class="col">
-                        <label><?php echo __('share_link'); ?></label>
-                        <div class="share-url"><?php echo htmlspecialchars($share_url); ?></div>
+                        <label><?= __('share_link'); ?></label>
+                        <div class="share-url"><?= htmlspecialchars($share_url); ?></div>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col">
-                        <a href="index.php" class="button primary"><?php echo __('share_another'); ?></a>
+                        <a href="index.php" class="button primary"><?= __('share_another'); ?></a>
                     </div>
                 </div>
             </div>

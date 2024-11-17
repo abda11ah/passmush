@@ -7,8 +7,8 @@ define('DBHOST', 'localhost');
 define('DBNAME', 'pshare');
 define('DBUSER', 'root');
 define('DBPASS', '0000');
-define('DBTABLE_PREFIX', '_'); // Optional table prefix
-define('DBTABLE_NAME', 'Lm2'); // Table name for storing passwords
+define('DBTABLE_PREFIX', '__'); // Optional table prefix
+define('DBTABLE_NAME', 'passwords'); // Table name for storing passwords
 
 // Company configuration
 define('COMPANY_LOGO', ''); // Path to company logo

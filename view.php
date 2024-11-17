@@ -1,6 +1,7 @@
 <?php
 // Define secure access constant
 define('SECURE_ACCESS', true);
+session_start();
 
 require_once 'lang.php';
 require_once 'env.inc.php';
@@ -31,11 +32,11 @@ if (!$row) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $_SESSION['lang']; ?>">
+<html lang="<?= $_SESSION['lang']; ?>">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title><?php echo __('shared_password'); ?></title>
+        <title><?= __('shared_password'); ?></title>
         <link rel="stylesheet" href="chota.min.css">
         <style>
             body {
@@ -43,7 +44,6 @@ if (!$row) {
                 background: var(--bg-secondary);
             }
             .container {
-                max-width: 600px;
                 margin: 0 auto;
             }
             .card {
@@ -82,32 +82,32 @@ if (!$row) {
                 const passwordText = document.getElementById('password-text').textContent;
                 navigator.clipboard.writeText(passwordText).then(() => {
                     const copyBtn = document.getElementById('copy-btn');
-                    copyBtn.textContent = '<?php echo __('copied'); ?>';
+                    copyBtn.textContent = '<?= __('copied'); ?>';
                     setTimeout(() => {
-                        copyBtn.textContent = '<?php echo __('copy_clipboard'); ?>';
+                        copyBtn.textContent = '<?= __('copy_clipboard'); ?>';
                     }, 2000);
                 });
             }
 
             function destroyPassword() {
-                if (confirm('<?php echo __('confirm_destroy'); ?>')) {
+                if (confirm('<?= __('confirm_destroy'); ?>')) {
                     fetch('destroy.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
                         },
-                        body: 'id=<?php echo urlencode($id); ?>'
+                        body: 'id=<?= urlencode($id); ?>'
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            alert('<?php echo __('password_destroyed'); ?>');
+                            alert('<?= __('password_destroyed'); ?>');
                             window.location.href = 'index.php';
                         } else {
-                            alert('<?php echo __('destroy_error'); ?>');
+                            alert('<?= __('destroy_error'); ?>');
                         }
                     })
-                    .catch(() => alert('<?php echo __('destroy_error'); ?>'));
+                    .catch(() => alert('<?= __('destroy_error'); ?>'));
                 }
             }
         </script>
@@ -133,38 +133,33 @@ if (!$row) {
                 </div>
             <?php endif; ?>
 
-            <nav class="text-right">
-                <a href="?lang=fr&id=<?php echo htmlspecialchars($id); ?>" class="<?php echo $_SESSION['lang'] === 'fr' ? 'active' : ''; ?>">Français</a> |
-                <a href="?lang=en&id=<?php echo htmlspecialchars($id); ?>" class="<?php echo $_SESSION['lang'] === 'en' ? 'active' : ''; ?>">English</a>
-            </nav>
-
             <div class="card">
                 <?php if (isset($error)): ?>
-                    <p class="error text-center"><?php echo htmlspecialchars($error); ?></p>
+                    <p class="error text-center"><?= htmlspecialchars($error); ?></p>
                 <?php else: ?>
-                    <h3 class="text-center"><?php echo __('shared_password'); ?></h3>
+                    <h3 class="text-center"><?= __('shared_password'); ?></h3>
                     <div class="row">
                         <div class="col">
-                            <label><?php echo __('password'); ?></label>
+                            <label><?= __('password'); ?></label>
                             <div class="password-display">
                                 <?php require_once 'crypt.inc.php';
                                 $enc = new Encryption();
                                 ?>
-                                <span id="password-text"><?php echo nl2br(htmlspecialchars($enc->decrypt($row['data']))); ?></span>
+                                <span id="password-text"><?= nl2br(htmlspecialchars($enc->decrypt($row['data']))); ?></span>
                             </div>
-                            <button id="copy-btn" onclick="copyToClipboard()" class="button primary"><?php echo __('copy_clipboard'); ?></button>
+                            <button id="copy-btn" onclick="copyToClipboard()" class="button primary"><?= __('copy_clipboard'); ?></button>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
                             <small>
                                 <?php if ($row['expires_at'] !== 9223372036854775807): ?>
-                                    <p><?php echo __('expires'); ?> <?php echo date(__('date_format'), $row['expires_at']); ?></p>
+                                    <p><?= __('expires'); ?> <?= date(__('date_format'), $row['expires_at']); ?></p>
                                 <?php else: ?>
-                                    <p><?php echo __('no_expiration'); ?></p>
+                                    <p><?= __('no_expiration'); ?></p>
                                 <?php endif; ?>
                                 <?php if ($row['view_limit'] > 0): ?>
-                                    <p><?php echo __('views_remaining'); ?> <?php echo $row['view_limit'] - $row['view_count']; ?> <?php echo __('of'); ?> <?php echo $row['view_limit']; ?></p>
+                                    <p><?= __('views_remaining'); ?> <?= $row['view_limit'] - $row['view_count']; ?> <?= __('of'); ?> <?= $row['view_limit']; ?></p>
                                 <?php endif; ?>
                             </small>
                         </div>
@@ -174,9 +169,9 @@ if (!$row) {
                 <div class="row">
                     <div class="col">
                         <div class="button-group">
-                            <a href="index.php" class="button primary"><?php echo __('share_another'); ?></a>
+                            <a href="index.php" class="button primary"><?= __('share_another'); ?></a>
                             <?php if (!isset($error)): ?>
-                                <button onclick="destroyPassword()" class="button error"><?php echo __('destroy_password'); ?></button>
+                                <button onclick="destroyPassword()" class="button error"><?= __('destroy_password'); ?></button>
                             <?php endif; ?>
                         </div>
                     </div>
