@@ -8,7 +8,7 @@ require_once 'checkenv.inc.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_once 'db.inc.php';
-    require_once 'enc.inc.php';
+    require_once 'crypt.inc.php';
 
     $enc = new Encryption();
     $encrypted = $enc->encrypt($_POST['data']);
@@ -19,7 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = bin2hex(random_bytes(16));
 
     // Calculate expiration timestamp
-    $expiration = time() + ($expires * 3600);
+    // Use 64-bit max integer for unlimited
+    $expiration = $expires === -1 ? 9223372036854775807 : time() + ($expires * 3600);
 
     // Store the encrypted data
     $table = DBTABLE_PREFIX . DBTABLE_NAME;

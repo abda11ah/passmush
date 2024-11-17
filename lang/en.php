@@ -51,6 +51,7 @@ return [
     'tables_created' => 'Tables created successfully',
     'tables_error' => 'Table creation failed: %s',
     'date_format' => 'Y-m-d @ H:i:s',
+    'no_expiration' => 'No expiration',
     'time_options' => [
         '1' => '1 hour',
         '2' => '2 hours',
@@ -58,7 +59,8 @@ return [
         '24' => '24 hours',
         '72' => '3 days',
         '168' => '1 week',
-        '720' => '1 month'
+        '720' => '1 month',
+        '-1' => 'Unlimited (not recommended)'
     ],
     'view_options' => [
         '1' => '1 time',
@@ -107,4 +109,7 @@ return [
     'logo_uploaded' => 'Company logo uploaded successfully',
     'uploads_dir_created' => 'Uploads directory created successfully',
     'uploads_dir_error' => 'Error creating uploads directory',
+        // Exception page translations
+    'error_occurred' => 'An Error Occurred: ',
+    'return_home' => 'Return to Home',
 ];

@@ -16,4 +16,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Redirect back to the referring page
 header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? 'index.php'));
 exit;
-?>

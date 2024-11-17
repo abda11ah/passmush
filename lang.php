@@ -1,4 +1,6 @@
 <?php
+// Prevent direct access to this file
+defined('SECURE_ACCESS') or die('Direct access to this file is not allowed');
 session_start();
 
 // Available languages

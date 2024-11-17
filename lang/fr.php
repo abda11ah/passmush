@@ -51,6 +51,7 @@ return [
     'tables_created' => 'Tables créées avec succès',
     'tables_error' => 'Échec de la création des tables : %s',
     'date_format' => 'd-m-Y à H:i:s',
+    'no_expiration' => 'Pas d\'expiration',
     'time_options' => [
         '1' => '1 heure',
         '2' => '2 heures',
@@ -58,7 +59,8 @@ return [
         '24' => '24 heures',
         '72' => '3 jours',
         '168' => '1 semaine',
-        '720' => '1 mois'
+        '720' => '1 mois',
+        '-1' => 'Illimité (non recommandé)'
     ],
     'view_options' => [
         '1' => '1 fois',
@@ -107,4 +109,7 @@ return [
     'logo_uploaded' => 'Logo de l\'entreprise téléchargé avec succès',
     'uploads_dir_created' => 'Répertoire des téléchargements créé avec succès',
     'uploads_dir_error' => 'Erreur lors de la création du répertoire des téléchargements',
+        // Exception page translations
+    'error_occurred' => 'Une Erreur est Survenue : ',
+    'return_home' => 'Retour à l\'Accueil',
 ];

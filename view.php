@@ -2,17 +2,11 @@
 // Define secure access constant
 define('SECURE_ACCESS', true);
 
-if (!file_exists('config.inc.php') || (filesize('config.inc.php') === 0)) {
-    header('Location: install.php');
-    exit();
-}
-
 require_once 'lang.php';
 require_once 'env.inc.php';
 require_once 'config.inc.php';
 require_once 'header_warning.php';
 require_once 'checkenv.inc.php';
-
 require_once 'db.inc.php';
 
 if (!isset($_GET['id'])) {
@@ -23,7 +17,7 @@ if (!isset($_GET['id'])) {
 $id = $_GET['id'];
 $current_time = time();
 $table = DBTABLE_PREFIX . DBTABLE_NAME;
-$stmt = $pdo->prepare("SELECT * FROM {$table} WHERE id = ? AND expires_at > ?");
+$stmt = $pdo->prepare("SELECT * FROM {$table} WHERE id = ? AND (expires_at > ? OR expires_at = 9223372036854775807)");
 $stmt->execute([$id, $current_time]);
 $row = $stmt->fetch();
 
@@ -105,26 +99,25 @@ if (!$row) {
                         },
                         body: 'id=<?php echo urlencode($id); ?>'
                     })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    alert('<?php echo __('password_destroyed'); ?>');
-                                    window.location.href = 'index.php';
-                                } else {
-                                    alert('<?php echo __('destroy_error'); ?>');
-                                }
-                            })
-                            .catch(() => alert('<?php echo __('destroy_error'); ?>'));
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('<?php echo __('password_destroyed'); ?>');
+                            window.location.href = 'index.php';
+                        } else {
+                            alert('<?php echo __('destroy_error'); ?>');
+                        }
+                    })
+                    .catch(() => alert('<?php echo __('destroy_error'); ?>'));
                 }
             }
         </script>
     </head>
     <body>
+        <?php showHeader(); ?>
         <div class="container">
-            <?php
-            showInstallWarning();
-            if (isset($_SESSION['success_message'])):
-                ?>
+            <?php showInstallWarning(); ?>
+            <?php if (isset($_SESSION['success_message'])): ?>
                 <div class="success-message" style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 1rem; margin-bottom: 2rem; border-radius: 4px;">
                     <?php
                     echo htmlspecialchars($_SESSION['success_message']);
@@ -155,7 +148,7 @@ if (!$row) {
                         <div class="col">
                             <label><?php echo __('password'); ?></label>
                             <div class="password-display">
-                                <?php require_once 'enc.inc.php';
+                                <?php require_once 'crypt.inc.php';
                                 $enc = new Encryption();
                                 ?>
                                 <span id="password-text"><?php echo htmlspecialchars($enc->decrypt($row['data'])); ?></span>
@@ -166,14 +159,18 @@ if (!$row) {
                     <div class="row">
                         <div class="col">
                             <small>
-                                <p><?php echo __('expires'); ?> <?php echo date(__('date_format'), $row['expires_at']); ?></p>
+                                <?php if ($row['expires_at'] !== 9223372036854775807): ?>
+                                    <p><?php echo __('expires'); ?> <?php echo date(__('date_format'), $row['expires_at']); ?></p>
+                                <?php else: ?>
+                                    <p><?php echo __('no_expiration'); ?></p>
+                                <?php endif; ?>
                                 <?php if ($row['view_limit'] > 0): ?>
                                     <p><?php echo __('views_remaining'); ?> <?php echo $row['view_limit'] - $row['view_count']; ?> <?php echo __('of'); ?> <?php echo $row['view_limit']; ?></p>
-    <?php endif; ?>
+                                <?php endif; ?>
                             </small>
                         </div>
                     </div>
-<?php endif; ?>
+                <?php endif; ?>
 
                 <div class="row">
                     <div class="col">
@@ -181,7 +178,7 @@ if (!$row) {
                             <a href="index.php" class="button primary"><?php echo __('share_another'); ?></a>
                             <?php if (!isset($error)): ?>
                                 <button onclick="destroyPassword()" class="button error"><?php echo __('destroy_password'); ?></button>
-<?php endif; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
