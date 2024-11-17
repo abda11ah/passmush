@@ -1,4 +1,7 @@
 <?php
+// Define secure access constant
+define('SECURE_ACCESS', true);
+
 require_once 'lang.php';
 ?>
 <!DOCTYPE html>
