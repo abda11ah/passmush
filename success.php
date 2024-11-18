@@ -10,7 +10,7 @@ require_once 'header_warning.php';
         <link rel="stylesheet" href="chota.min.css">
         <style>
             body {
-                padding: 2rem;
+                padding: 1rem;
                 background: var(--bg-secondary);
             }
             .container {

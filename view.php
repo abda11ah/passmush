@@ -40,7 +40,7 @@ if (!$row) {
         <link rel="stylesheet" href="chota.min.css">
         <style>
             body {
-                padding: 0;
+                padding: 1rem;
                 background: var(--bg-secondary);
             }
             .container {

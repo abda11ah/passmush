@@ -25,7 +25,7 @@ require_once 'checkenv.inc.php';
     <title><?= __('page_title'); ?></title>
     <link rel="stylesheet" href="chota.min.css">
     <style>
-        body { padding: 0; background: var(--bg-secondary); }
+        body { padding: 1rem; background: var(--bg-secondary); }
         .container { margin: 0 auto; }
         .card { background: white; padding: 2rem; border-radius: 4px; }
         .password-group {
