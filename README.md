@@ -3,6 +3,11 @@
 
 A secure, user-friendly web application for sharing sensitive passwords and text information with automatic expiration and view limits.
 
+## TO DO
+- API access to create URLs
+- Company name change at install
+- Maybe e-mail sending (from a third tab)
+
 ## 🌟 Key Features
 
 ### Security
@@ -64,7 +69,7 @@ A secure, user-friendly web application for sharing sensitive passwords and text
 ## 🛠️ Installation
 
 1. Upload files to your web server
-2. Visit the installation page
+2. Visit the installation page (install.php)
 3. Follow the setup wizard
 4. Configure database settings
 5. Set up encryption keys
