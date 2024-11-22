@@ -72,8 +72,7 @@ A secure, user-friendly web application for sharing sensitive passwords and text
 2. Visit the installation page (install.php)
 3. Follow the setup wizard
 4. Configure database settings
-5. Set up encryption keys
-6. Remove install.php file
+5. Remove install.php file
 
 ## 🔒 Security Recommendations
 
