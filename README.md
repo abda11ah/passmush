@@ -3,6 +3,14 @@
 
 A secure, user-friendly web application for sharing sensitive passwords and text information with automatic expiration and view limits.
 
+## 🛠️ Installation
+
+1. Upload files to your web server
+2. Visit the installation page (install.php)
+3. Follow the setup wizard
+4. Configure database settings
+5. Remove install.php file
+
 ## TO DO
 - API access to create URLs
 - Company name change at install
@@ -65,14 +73,6 @@ A secure, user-friendly web application for sharing sensitive passwords and text
 - Installation wizard
 - Environment checks
 - Custom error pages
-
-## 🛠️ Installation
-
-1. Upload files to your web server
-2. Visit the installation page (install.php)
-3. Follow the setup wizard
-4. Configure database settings
-5. Remove install.php file
 
 ## 🔒 Security Recommendations
 
